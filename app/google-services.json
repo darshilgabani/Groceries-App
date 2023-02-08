@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "190754857933",
+    "project_id": "evaluation-3-groceries-app",
+    "storage_bucket": "evaluation-3-groceries-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190754857933:android:cdd54fec2b0d4931cdda84",
+        "android_client_info": {
+          "package_name": "com.biz.evaluation3groceriesapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190754857933-m9g45kl8kma3hfei8tpu45lo8p64u9nc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVsr2xpfKUgIOdSp1VWorLMehn6s2HduY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190754857933-m9g45kl8kma3hfei8tpu45lo8p64u9nc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
