@@ -2,4 +2,7 @@
 <resources>
     <dimen name="startMargin">30dp</dimen>
     <dimen name="endMargin">30dp</dimen>
+
+    <dimen name="startMarginProduct">18dp</dimen>
+    <dimen name="endMarginProduct">18dp</dimen>
 </resources>
