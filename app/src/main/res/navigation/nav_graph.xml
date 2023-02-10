@@ -9,7 +9,14 @@
         android:id="@+id/shopFragment"
         android:name="com.biz.evaluation3groceriesapp.fragment.ShopFragment"
         android:label="fragment_shop"
-        tools:layout="@layout/fragment_shop" />
+        tools:layout="@layout/fragment_shop" >
+        <action
+            android:id="@+id/action_shopFragment_to_productDetailsFragment2"
+            app:destination="@id/productDetailsFragment2" />
+        <argument
+            android:name="id"
+            app:argType="integer" />
+    </fragment>
     <fragment
         android:id="@+id/exploreFragment"
         android:name="com.biz.evaluation3groceriesapp.fragment.ExploreFragment"
@@ -30,4 +37,17 @@
         android:name="com.biz.evaluation3groceriesapp.fragment.AccountFragment"
         android:label="fragment_account"
         tools:layout="@layout/fragment_account" />
+
+    <fragment
+        android:id="@+id/productDetailsFragment2"
+        android:name="com.biz.evaluation3groceriesapp.fragment.ProductDetailsFragment"
+        android:label="fragment_productdetails"
+        tools:layout="@layout/fragment_productdetails" >
+        <action
+            android:id="@+id/action_productDetailsFragment2_to_shopFragment"
+            app:destination="@id/shopFragment" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+    </fragment>
 </navigation>

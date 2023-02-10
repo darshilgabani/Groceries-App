@@ -1,12 +1,19 @@
 package com.biz.evaluation3groceriesapp.fragment
 
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,22 +22,34 @@ import com.biz.evaluation3groceriesapp.adapter.BestSellingAdapter
 import com.biz.evaluation3groceriesapp.adapter.ExclusiveOfferAdapter
 import com.biz.evaluation3groceriesapp.clicklistener.SelectListener
 import com.biz.evaluation3groceriesapp.modelclass.BestSelling
+import com.biz.evaluation3groceriesapp.modelclass.Cart
 import com.biz.evaluation3groceriesapp.modelclass.ExclusiveOffer
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.*
+import com.google.gson.Gson
 
 class ShopFragment : Fragment(),SelectListener {
 
     lateinit var recyclerViewExclOffer : RecyclerView
-    lateinit var recyclerViewBestSelling : RecyclerView
+    private lateinit var recyclerViewBestSelling : RecyclerView
+
+    lateinit var pBExclOffer : ProgressBar
+    lateinit var pBBestSelling : ProgressBar
 
     private lateinit var databaseRefExclOffer: DatabaseReference
     private lateinit var databaseRefBestSelling: DatabaseReference
+    private lateinit var databaseRefAddToCart: DatabaseReference
 
-     var adapterBest :BestSellingAdapter? = null
+    lateinit var sharedPreferences: SharedPreferences
+    lateinit var editSharedPreferences: SharedPreferences.Editor
+
+     private var adapterBest :BestSellingAdapter? = null
      var adapterExcl :ExclusiveOfferAdapter? = null
 
     var listExclOffer : ArrayList<ExclusiveOffer>? = ArrayList()
     var listBestSelling : ArrayList<BestSelling>? = ArrayList()
+
+    var added : Boolean? = null
 
     lateinit var gridLayoutManager : GridLayoutManager
 
@@ -68,6 +87,7 @@ class ShopFragment : Fragment(),SelectListener {
     }
 
     private fun getData() {
+
         listExclOffer?.clear()
         databaseRefExclOffer.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -75,6 +95,7 @@ class ShopFragment : Fragment(),SelectListener {
                 for(data in snapshot.children){
                     val user = data.getValue(ExclusiveOffer::class.java)
                     listExclOffer?.add(user!!)
+                    pBExclOffer.visibility = View.GONE
                 }
                 adapterExcl()
             }
@@ -83,6 +104,8 @@ class ShopFragment : Fragment(),SelectListener {
                 Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
             }
         })
+        pBExclOffer.visibility = View.VISIBLE
+
 
         listBestSelling?.clear()
         databaseRefBestSelling.addValueEventListener(object : ValueEventListener {
@@ -90,6 +113,7 @@ class ShopFragment : Fragment(),SelectListener {
                 for(data in snapshot.children){
                     val user = data.getValue(BestSelling::class.java)
                     listBestSelling?.add(user!!)
+                    pBBestSelling.visibility = View.GONE
                 }
                 adapterBest()
             }
@@ -98,30 +122,75 @@ class ShopFragment : Fragment(),SelectListener {
                 Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
             }
         })
+        pBBestSelling.visibility = View.VISIBLE
+
     }
 
     private fun initVar(view: View) {
         recyclerViewExclOffer = view.findViewById(R.id.recyclerViewExclOffer)
         recyclerViewBestSelling = view.findViewById(R.id.recyclerViewBestSelling)
 
+        pBExclOffer = view.findViewById(R.id.pBExclOffer)
+        pBBestSelling = view.findViewById(R.id.pBBestSelling)
+
         databaseRefExclOffer = FirebaseDatabase.getInstance().getReference("ExclusiveOffer")
         databaseRefBestSelling = FirebaseDatabase.getInstance().getReference("BestSelling")
+        databaseRefAddToCart = FirebaseDatabase.getInstance().getReference("AddToCart")
 
+        sharedPreferences = requireActivity().getSharedPreferences("Login Data", AppCompatActivity.MODE_PRIVATE)
+        editSharedPreferences = sharedPreferences.edit()
     }
 
     override fun onExclClicked(model: ExclusiveOffer) {
-        Toast.makeText(context, model.Name, Toast.LENGTH_SHORT).show()
+        val bundle = Bundle()
+        bundle.putString("ExclModel", Gson().toJson(model))
+        editSharedPreferences.putString("Clicked","ExclusiveOffer").apply()
+        Navigation.findNavController(requireView()).navigate(R.id.action_shopFragment_to_productDetailsFragment2,bundle)
     }
 
     override fun onBestClicked(model: BestSelling) {
-        Toast.makeText(context, model.Name, Toast.LENGTH_SHORT).show()
+        val bundle = Bundle()
+        bundle.putString("BestModel", Gson().toJson(model))
+        editSharedPreferences.putString("Clicked","BestSelling").apply()
+        Navigation.findNavController(requireView()).navigate(R.id.action_shopFragment_to_productDetailsFragment2,bundle)
     }
 
     override fun onAddToCartBestClicked(model: BestSelling, addButtonImage: ImageView) {
         addButtonImage.setImageResource(R.drawable.tickmark_icon)
+
     }
 
     override fun onAddToCartExclClicked(model: ExclusiveOffer, addButtonImage: ImageView) {
-        addButtonImage.setImageResource(R.drawable.tickmark_icon)
+        databaseRefAddToCart.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(data in snapshot.children){
+                    println(data.toString())
+                    if (data.key == model.Name){
+                        added = true
+                    }else if (data.key != model.Name){
+                        added = false
+                    }
+                }
+
+                if (added == true){
+                    databaseRefAddToCart.child(model.Name).removeValue().addOnSuccessListener {
+                            addButtonImage.setImageResource(R.drawable.plus_image)
+                            Toast.makeText(requireContext(), "Remove From Cart to Successfully", Toast.LENGTH_SHORT).show()
+                        }
+                }else if (added == false){
+                    databaseRefAddToCart.child(model.Name).setValue(model)
+                    .addOnSuccessListener {
+                        addButtonImage.setImageResource(R.drawable.tickmark_icon)
+                        Toast.makeText(requireContext(), "Added to Cart Successfully", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+
     }
 }

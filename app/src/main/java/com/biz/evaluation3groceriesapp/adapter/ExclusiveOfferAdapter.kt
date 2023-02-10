@@ -9,6 +9,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.clicklistener.SelectListener
+import com.biz.evaluation3groceriesapp.fragment.ShopFragment
 import com.biz.evaluation3groceriesapp.modelclass.ExclusiveOffer
 import com.bumptech.glide.Glide
 

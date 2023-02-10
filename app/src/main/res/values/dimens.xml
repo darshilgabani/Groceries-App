@@ -5,4 +5,7 @@
 
     <dimen name="startMarginProduct">18dp</dimen>
     <dimen name="endMarginProduct">18dp</dimen>
+
+    <dimen name="startProductDetails">18dp</dimen>
+    <dimen name="endProductDetails">18dp</dimen>
 </resources>
