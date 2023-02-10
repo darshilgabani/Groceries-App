@@ -1,43 +1,40 @@
 package com.biz.evaluation3groceriesapp.fragment
 
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.RatingBar
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import android.view.animation.Animation
+import android.widget.*
 import androidx.cardview.widget.CardView
+import androidx.fragment.app.Fragment
 import com.biz.evaluation3groceriesapp.R
-import com.biz.evaluation3groceriesapp.modelclass.BestSelling
-import com.biz.evaluation3groceriesapp.modelclass.ExclusiveOffer
+import com.biz.evaluation3groceriesapp.modelclass.ProductDetails
 import com.bumptech.glide.Glide
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.gson.Gson
+import com.google.firebase.database.*
 
 class ProductDetailsFragment : Fragment() {
 
-    lateinit var bottomNavigationView : BottomNavigationView
+    lateinit var bottomNavigationView: BottomNavigationView
+    lateinit var pBLoading : ProgressBar
 
-    private var productImageView : ImageView? = null
-    private var nameTextView : TextView? = null
-    private var weightTextView : TextView? = null
-    private var priceTextView : TextView? = null
-    private var detailsTextView : TextView? = null
-    private var nutritionTextView : TextView? = null
-    private var ratingBar : RatingBar? = null
-    lateinit var cartButton : CardView
+    private var productImageView: ImageView? = null
+    private var favButton: ImageView? = null
+    private var nameTextView: TextView? = null
+    private var weightTextView: TextView? = null
+    private var priceTextView: TextView? = null
+    private var detailsTextView: TextView? = null
+    private var nutritionTextView: TextView? = null
+    private var ratingBar: RatingBar? = null
+    lateinit var cartButton: CardView
 
-    lateinit var sharedPreferences: SharedPreferences
-    lateinit var editSharedPreferences: SharedPreferences.Editor
+    private lateinit var databaseRefProduct: DatabaseReference
+    private lateinit var databaseRefFavourite: DatabaseReference
 
-    var exclData : ExclusiveOffer? = null
-    var bestData : BestSelling? = null
-    var clicked : String? = null
+    var productData: ProductDetails? = null
+    var added : Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,70 +51,63 @@ class ProductDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view =  inflater.inflate(R.layout.fragment_productdetails, container, false)
+        val view = inflater.inflate(R.layout.fragment_productdetails, container, false)
 
         initVar(view)
 
         getData()
 
-//        setData()
+        onClick()
 
         return view
     }
 
-    private fun setData() {
-        Glide.with(requireContext())
-            .load(exclData?.Url)
-            .placeholder(R.drawable.app_logo)
-            .into(productImageView!!)
-
-        nameTextView?.text = exclData?.Name
-        weightTextView?.text = exclData?.Weight
-        priceTextView?.text = exclData?.Price
+    private fun onClick() {
+        favButton?.setOnClickListener {
+            pBLoading.visibility = View.VISIBLE
+            val clickedId = arguments?.getString("ClickedID")
+            addFavourite(clickedId!!,favButton!!)
+        }
     }
 
     private fun getData() {
-        clicked = sharedPreferences.getString("Clicked","")
+        val clickedId = arguments?.getString("ClickedID")
+        databaseRefProduct.child(clickedId!!).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
 
-        when(clicked){
-            "ExclusiveOffer" -> {
-                val jsonData = arguments?.getString("ExclModel")
-                exclData = Gson().fromJson(jsonData,ExclusiveOffer::class.java)
-
-                Glide.with(requireContext())
-                    .load(exclData?.Url)
-                    .placeholder(R.drawable.app_logo)
-                    .into(productImageView!!)
-
-                nameTextView?.text = exclData?.Name
-                weightTextView?.text = exclData?.Weight
-                priceTextView?.text = exclData?.Price
-                detailsTextView?.text = exclData?.Details
-                ratingBar?.rating = exclData?.Rating!!.toFloat()
-                nutritionTextView?.text = exclData?.Nutrition
+                productData = snapshot.getValue(ProductDetails::class.java)
+                if (productData != null) {
+                    setData()
+                }
             }
-            "BestSelling" -> {
-                val jsonData = arguments?.getString("BestModel")
-                bestData = Gson().fromJson(jsonData,BestSelling::class.java)
 
-                Glide.with(requireContext())
-                    .load(bestData?.Url)
-                    .placeholder(R.drawable.app_logo)
-                    .into(productImageView!!)
-
-                nameTextView?.text = bestData?.Name
-                weightTextView?.text = bestData?.Weight
-                priceTextView?.text = bestData?.Price
-                detailsTextView?.text = bestData?.Details
-                ratingBar?.rating = bestData?.Rating!!.toFloat()
-                nutritionTextView?.text = bestData?.Nutrition
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
             }
+        })
+    }
+
+    private fun setData() {
+        Glide.with(requireActivity().applicationContext)
+            .load(productData?.Url)
+            .placeholder(R.drawable.app_logo)
+            .into(productImageView!!)
+
+        nameTextView?.text = productData?.Name
+        weightTextView?.text = productData?.Weight
+        priceTextView?.text = productData?.Price
+        detailsTextView?.text = productData?.Details
+        ratingBar?.rating = productData?.Rating!!.toFloat()
+        nutritionTextView?.text = productData?.Nutrition
+
+        if (productData!!.FavAdded == true){
+            favButton?.setImageResource(R.drawable.favorite_filled)
         }
-
     }
 
     private fun initVar(view: View) {
         productImageView = view.findViewById(R.id.productImageView)
+        favButton = view.findViewById(R.id.favButton)
         nameTextView = view.findViewById(R.id.nameTextView)
         weightTextView = view.findViewById(R.id.weightTextView)
         priceTextView = view.findViewById(R.id.priceTextView)
@@ -125,9 +115,61 @@ class ProductDetailsFragment : Fragment() {
         nutritionTextView = view.findViewById(R.id.nutritionTextView)
         ratingBar = view.findViewById(R.id.ratingBar)
         cartButton = view.findViewById(R.id.cartButton)
+        pBLoading = view.findViewById(R.id.pBLoading)
 
-        sharedPreferences = requireActivity().getSharedPreferences("Login Data", AppCompatActivity.MODE_PRIVATE)
-        editSharedPreferences = sharedPreferences.edit()
+        databaseRefProduct = FirebaseDatabase.getInstance().getReference("Products")
+        databaseRefFavourite = FirebaseDatabase.getInstance().reference.child("Favourite")
     }
+
+    private fun addFavourite(id: String, addButtonImage: ImageView) {
+        databaseRefFavourite.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                if (!snapshot.exists()) {
+                    databaseRefFavourite.child(id).setValue(id)
+                        .addOnSuccessListener {
+                            addButtonImage.setImageResource(R.drawable.favorite_filled)
+                            databaseRefProduct.child(id).child("FavAdded").setValue(true)
+                            pBLoading.visibility = View.INVISIBLE
+                            Toast.makeText(requireContext(), "Added to Favourite Successfully", Toast.LENGTH_SHORT).show()
+                        }
+                } else
+                {
+                    for(data in snapshot.children){
+                        if (data.key == id){
+                            added = true
+                        }else if (data.key != id){
+                            added = false
+                        }
+                    }
+
+                    if (added == true){
+                        databaseRefFavourite.child(id).removeValue().addOnSuccessListener {
+                            addButtonImage.setImageResource(R.drawable.favorite_border)
+                            databaseRefProduct.child(id).child("FavAdded").setValue(false)
+                            pBLoading.visibility = View.INVISIBLE
+                            Toast.makeText(requireContext(), "Remove From Favourite Successfully", Toast.LENGTH_SHORT).show()
+                        }
+                    }else if (added == false){
+                        databaseRefFavourite.child(id).setValue(id)
+                            .addOnSuccessListener {
+                                addButtonImage.setImageResource(R.drawable.favorite_filled)
+                                databaseRefProduct.child(id).child("FavAdded").setValue(true)
+                                pBLoading.visibility = View.INVISIBLE
+                                Toast.makeText(requireContext(), "Added to Favourite Successfully", Toast.LENGTH_SHORT).show()
+                            }
+                    }
+
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+
+    }
+
 
 }

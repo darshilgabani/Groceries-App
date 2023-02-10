@@ -40,6 +40,12 @@ class ExclusiveOfferAdapter(private val products: ArrayList<ExclusiveOffer>) : R
                 .placeholder(R.drawable.app_logo)
                 .into(productImageView)
 
+            if (data.Added == false){
+                addButtonImage.setImageResource(R.drawable.plus_image)
+            }else if (data.Added == true){
+                addButtonImage.setImageResource(R.drawable.tickmark_icon)
+            }
+
         }
     }
 
@@ -55,11 +61,11 @@ class ExclusiveOfferAdapter(private val products: ArrayList<ExclusiveOffer>) : R
         holder.onBindData(data)
 
         holder.cardView.setOnClickListener {
-            listener?.onExclClicked(data)
+            listener?.onExclClicked(data.Id)
         }
 
         holder.addCartButton.setOnClickListener {
-            listener?.onAddToCartExclClicked(data,holder.addButtonImage)
+            listener?.onAddToCartExclClicked(data.Id,holder.addButtonImage)
         }
 
     }

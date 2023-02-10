@@ -1,8 +1,8 @@
 package com.biz.evaluation3groceriesapp.fragment
 
 import android.content.SharedPreferences
+import android.opengl.Visibility
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +12,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,10 +19,7 @@ import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.adapter.BestSellingAdapter
 import com.biz.evaluation3groceriesapp.adapter.ExclusiveOfferAdapter
 import com.biz.evaluation3groceriesapp.clicklistener.SelectListener
-import com.biz.evaluation3groceriesapp.modelclass.BestSelling
-import com.biz.evaluation3groceriesapp.modelclass.Cart
-import com.biz.evaluation3groceriesapp.modelclass.ExclusiveOffer
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.biz.evaluation3groceriesapp.modelclass.*
 import com.google.firebase.database.*
 import com.google.gson.Gson
 
@@ -35,10 +30,12 @@ class ShopFragment : Fragment(),SelectListener {
 
     lateinit var pBExclOffer : ProgressBar
     lateinit var pBBestSelling : ProgressBar
+    lateinit var pBLoading : ProgressBar
 
     private lateinit var databaseRefExclOffer: DatabaseReference
     private lateinit var databaseRefBestSelling: DatabaseReference
     private lateinit var databaseRefAddToCart: DatabaseReference
+    private lateinit var databaseRefProduct: DatabaseReference
 
     lateinit var sharedPreferences: SharedPreferences
     lateinit var editSharedPreferences: SharedPreferences.Editor
@@ -91,13 +88,35 @@ class ShopFragment : Fragment(),SelectListener {
         listExclOffer?.clear()
         databaseRefExclOffer.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.childrenCount
 
                 for(data in snapshot.children){
-                    val user = data.getValue(ExclusiveOffer::class.java)
-                    listExclOffer?.add(user!!)
-                    pBExclOffer.visibility = View.GONE
+                    val user = data.value.toString()
+
+                    val lastElement = snapshot.children.last().value
+
+                    databaseRefProduct.child(user).addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+
+                            val exclData = snapshot.getValue(ExclusiveOffer::class.java)
+
+                            if (exclData!=null){
+                                listExclOffer?.add(exclData)
+                                pBExclOffer.visibility = View.GONE
+                            }
+
+                            if (lastElement == snapshot.key){
+                                adapterExcl()
+                            }
+
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
+                    })
+
                 }
-                adapterExcl()
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -106,16 +125,36 @@ class ShopFragment : Fragment(),SelectListener {
         })
         pBExclOffer.visibility = View.VISIBLE
 
-
         listBestSelling?.clear()
         databaseRefBestSelling.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for(data in snapshot.children){
-                    val user = data.getValue(BestSelling::class.java)
-                    listBestSelling?.add(user!!)
-                    pBBestSelling.visibility = View.GONE
+                    val user = data.value.toString()
+
+                    val lastElement = snapshot.children.last().value
+
+                    databaseRefProduct.child(user).addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+
+                            val bestData = snapshot.getValue(BestSelling::class.java)
+
+                            if (bestData!=null){
+                                listBestSelling?.add(bestData)
+                                pBBestSelling.visibility = View.GONE
+                            }
+
+                            if (lastElement == snapshot.key){
+                                adapterBest()
+                            }
+
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            TODO("Not yet implemented")
+                        }
+                    })
+
                 }
-                adapterBest()
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -123,6 +162,7 @@ class ShopFragment : Fragment(),SelectListener {
             }
         })
         pBBestSelling.visibility = View.VISIBLE
+
 
     }
 
@@ -132,57 +172,79 @@ class ShopFragment : Fragment(),SelectListener {
 
         pBExclOffer = view.findViewById(R.id.pBExclOffer)
         pBBestSelling = view.findViewById(R.id.pBBestSelling)
+        pBLoading = view.findViewById(R.id.pBLoading)
 
         databaseRefExclOffer = FirebaseDatabase.getInstance().getReference("ExclusiveOffer")
         databaseRefBestSelling = FirebaseDatabase.getInstance().getReference("BestSelling")
-        databaseRefAddToCart = FirebaseDatabase.getInstance().getReference("AddToCart")
+        databaseRefProduct = FirebaseDatabase.getInstance().getReference("Products")
+        databaseRefAddToCart = FirebaseDatabase.getInstance().reference.child("AddToCart")
 
         sharedPreferences = requireActivity().getSharedPreferences("Login Data", AppCompatActivity.MODE_PRIVATE)
         editSharedPreferences = sharedPreferences.edit()
+
     }
 
-    override fun onExclClicked(model: ExclusiveOffer) {
+    override fun onExclClicked(id : String) {
         val bundle = Bundle()
-        bundle.putString("ExclModel", Gson().toJson(model))
-        editSharedPreferences.putString("Clicked","ExclusiveOffer").apply()
+        bundle.putString("ClickedID", id)
         Navigation.findNavController(requireView()).navigate(R.id.action_shopFragment_to_productDetailsFragment2,bundle)
     }
 
-    override fun onBestClicked(model: BestSelling) {
+    override fun onBestClicked(id: String) {
         val bundle = Bundle()
-        bundle.putString("BestModel", Gson().toJson(model))
-        editSharedPreferences.putString("Clicked","BestSelling").apply()
+        bundle.putString("ClickedID",id)
         Navigation.findNavController(requireView()).navigate(R.id.action_shopFragment_to_productDetailsFragment2,bundle)
     }
 
-    override fun onAddToCartBestClicked(model: BestSelling, addButtonImage: ImageView) {
-        addButtonImage.setImageResource(R.drawable.tickmark_icon)
-
+    override fun onAddToCartBestClicked(id: String, addButtonImage: ImageView) {
+        pBLoading.visibility = View.VISIBLE
+        addToCart(id,addButtonImage)
     }
 
-    override fun onAddToCartExclClicked(model: ExclusiveOffer, addButtonImage: ImageView) {
+    override fun onAddToCartExclClicked(id : String, addButtonImage: ImageView) {
+        pBLoading.visibility = View.VISIBLE
+        addToCart(id,addButtonImage)
+    }
+
+    private fun addToCart(id: String, addButtonImage: ImageView) {
         databaseRefAddToCart.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                for(data in snapshot.children){
-                    println(data.toString())
-                    if (data.key == model.Name){
-                        added = true
-                    }else if (data.key != model.Name){
-                        added = false
-                    }
-                }
 
-                if (added == true){
-                    databaseRefAddToCart.child(model.Name).removeValue().addOnSuccessListener {
+                if (!snapshot.exists()) {
+                    databaseRefAddToCart.child(id).setValue(id)
+                        .addOnSuccessListener {
+                            addButtonImage.setImageResource(R.drawable.tickmark_icon)
+                            databaseRefProduct.child(id).child("Added").setValue(true)
+                            pBLoading.visibility = View.INVISIBLE
+                            Toast.makeText(requireContext(), "Added to Cart Successfully", Toast.LENGTH_SHORT).show()
+                        }
+                } else
+                {
+                    for(data in snapshot.children){
+                        if (data.key == id){
+                            added = true
+                        }else if (data.key != id){
+                            added = false
+                        }
+                    }
+
+                    if (added == true){
+                        databaseRefAddToCart.child(id).removeValue().addOnSuccessListener {
                             addButtonImage.setImageResource(R.drawable.plus_image)
+                            databaseRefProduct.child(id).child("Added").setValue(false)
+                            pBLoading.visibility = View.INVISIBLE
                             Toast.makeText(requireContext(), "Remove From Cart to Successfully", Toast.LENGTH_SHORT).show()
                         }
-                }else if (added == false){
-                    databaseRefAddToCart.child(model.Name).setValue(model)
-                    .addOnSuccessListener {
-                        addButtonImage.setImageResource(R.drawable.tickmark_icon)
-                        Toast.makeText(requireContext(), "Added to Cart Successfully", Toast.LENGTH_SHORT).show()
+                    }else if (added == false){
+                        databaseRefAddToCart.child(id).setValue(id)
+                            .addOnSuccessListener {
+                                addButtonImage.setImageResource(R.drawable.tickmark_icon)
+                                databaseRefProduct.child(id).child("Added").setValue(true)
+                                pBLoading.visibility = View.INVISIBLE
+                                Toast.makeText(requireContext(), "Added to Cart Successfully", Toast.LENGTH_SHORT).show()
+                            }
                     }
+
                 }
 
             }

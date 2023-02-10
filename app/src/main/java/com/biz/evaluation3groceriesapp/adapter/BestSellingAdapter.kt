@@ -40,6 +40,12 @@ class BestSellingAdapter(private val products: ArrayList<BestSelling>) : Recycle
                 .placeholder(R.drawable.app_logo)
                 .into(productImageView)
 
+            if (data.Added == false){
+                addButtonImage.setImageResource(R.drawable.plus_image)
+            }else if (data.Added == true){
+                addButtonImage.setImageResource(R.drawable.tickmark_icon)
+            }
+
         }
     }
 
@@ -55,11 +61,11 @@ class BestSellingAdapter(private val products: ArrayList<BestSelling>) : Recycle
         holder.onBindData(data)
 
         holder.cardView.setOnClickListener {
-            listener?.onBestClicked(data)
+            listener?.onBestClicked(data.Id)
         }
 
         holder.addCartButton.setOnClickListener {
-            listener?.onAddToCartBestClicked(data,holder.addButtonImage)
+            listener?.onAddToCartBestClicked(data.Id,holder.addButtonImage)
         }
 
     }

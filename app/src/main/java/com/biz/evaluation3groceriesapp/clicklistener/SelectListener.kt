@@ -5,9 +5,9 @@ import com.biz.evaluation3groceriesapp.modelclass.BestSelling
 import com.biz.evaluation3groceriesapp.modelclass.ExclusiveOffer
 
 interface SelectListener {
-    fun onExclClicked(model: ExclusiveOffer)
-    fun onBestClicked(model: BestSelling)
+    fun onExclClicked(id : String)
+    fun onBestClicked(id : String)
 
-    fun onAddToCartBestClicked(model: BestSelling, addButtonImage: ImageView)
-    fun onAddToCartExclClicked(model: ExclusiveOffer, addButtonImage: ImageView)
+    fun onAddToCartBestClicked(id : String, addButtonImage: ImageView)
+    fun onAddToCartExclClicked(id : String, addButtonImage: ImageView)
 }
