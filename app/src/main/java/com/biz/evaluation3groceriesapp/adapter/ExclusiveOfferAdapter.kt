@@ -8,16 +8,15 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.biz.evaluation3groceriesapp.R
-import com.biz.evaluation3groceriesapp.clicklistener.SelectListener
-import com.biz.evaluation3groceriesapp.fragment.ShopFragment
+import com.biz.evaluation3groceriesapp.clicklistener.ShopClickListener
 import com.biz.evaluation3groceriesapp.modelclass.ExclusiveOffer
 import com.bumptech.glide.Glide
 
 class ExclusiveOfferAdapter(private val products: ArrayList<ExclusiveOffer>) : RecyclerView.Adapter<ExclusiveOfferAdapter.ViewHolder>() {
 
-    var listener : SelectListener? = null
+    var listener : ShopClickListener? = null
 
-    fun setSelectListener(listener: SelectListener){
+    fun setSelectListener(listener: ShopClickListener){
         this.listener = listener
     }
 

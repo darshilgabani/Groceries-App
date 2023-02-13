@@ -6,16 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".fragment.ProductDetailsFragment">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmer_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <!-- Add your other views here -->
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -128,7 +121,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/weightTextView">
 
                 <ImageView
-                    android:id="@+id/imageView7"
+                    android:id="@+id/minusButton"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:src="@drawable/minus_button"
@@ -145,18 +138,18 @@
                     android:foreground="@drawable/number_border"
                     app:cardCornerRadius="15dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/imageView7"
+                    app:layout_constraintStart_toEndOf="@+id/minusButton"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_width="35dp"
+                        android:layout_height="30dp"
+                        android:layout_margin="10dp">
 
                         <TextView
-                            android:id="@+id/addButtonImage"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:layout_margin="10dp"
+                            android:id="@+id/countTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:gravity="center"
                             android:text="1"
                             android:textColor="#181725"
@@ -172,7 +165,7 @@
                 </androidx.cardview.widget.CardView>
 
                 <ImageView
-                    android:id="@+id/imageView8"
+                    android:id="@+id/plusButton"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_marginStart="25dp"
@@ -332,6 +325,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+
             <View
                 android:id="@+id/view3"
                 android:layout_width="match_parent"
@@ -399,7 +393,6 @@
 
     </ScrollView>
 
-
     <androidx.cardview.widget.CardView
         android:id="@+id/cartButton"
         android:layout_width="match_parent"
@@ -407,6 +400,7 @@
         android:layout_marginStart="@dimen/startMargin"
         android:layout_marginEnd="@dimen/endMargin"
         android:layout_marginBottom="30dp"
+        android:visibility="invisible"
         app:cardBackgroundColor="@color/buttonColor"
         app:cardCornerRadius="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -418,6 +412,7 @@
             android:layout_height="match_parent">
 
             <TextView
+                android:id="@+id/cartButtonTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/gilroylight"
@@ -443,6 +438,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/shimmer_layout" />
+        app:layout_constraintTop_toTopOf="@+id/scrollView2" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/skeletonLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:visibility="gone"
+        android:background="@color/white"
+        app:lottie_rawRes="@raw/skeleton_loading" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
