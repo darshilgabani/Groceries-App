@@ -47,7 +47,8 @@ class ShopFragment : Fragment(), ShopClickListener {
     var listExclOffer: ArrayList<ExclusiveOffer>? = ArrayList()
     var listBestSelling: ArrayList<BestSelling>? = ArrayList()
 
-    var listIndex: ArrayList<String>? = ArrayList()
+    var exclIndex: ArrayList<String>? = ArrayList()
+    var bestIndex: ArrayList<String>? = ArrayList()
 
     var added: Boolean? = null
     var user: String? = null
@@ -67,7 +68,9 @@ class ShopFragment : Fragment(), ShopClickListener {
 
         setLayout()
 
-//        adapterExcl()
+        adapterExcl()
+
+        adapterBest()
 
         return view
     }
@@ -92,81 +95,32 @@ class ShopFragment : Fragment(), ShopClickListener {
         recyclerViewBestSelling.adapter = adapterBest
     }
 
-    private fun asdad() {
-        if (listIndex != null) {
-            listExclOffer?.clear()
-            for (product in listIndex!!) {
-
-                Log.d("@@@I", listIndex?.size.toString())
-
-                databaseRefProduct.child(product)
-                    .addValueEventListener(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-
-
-                            exclData = snapshot.getValue(ExclusiveOffer::class.java)
-
-//                            if (exclData != null) {
-//                                listExclOffer?.add(exclData)
-//                                adapterExcl?.notifyDataSetChanged()
-//                                pBExclOffer.visibility = View.GONE
-//                            }
-
-                                listExclOffer?.add(exclData!!)
-                            if (product.length - 1 == product.lastIndex) {
-                                Log.d("@@@S", listExclOffer?.size.toString())
-
-
-                                adapterExcl()
-//                                adapterExcl?.notifyDataSetChanged()
-                                pBExclOffer.visibility = View.GONE
-                            }
-
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
-                        }
-
-                    })
-
-
-            }
-        }
-    }
-
-    private fun getData() {
-
-        listExclOffer?.clear()
-        databaseRefExclOffer.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-
-                for (data in snapshot.children) {
-                    user = data.value.toString()
-                    listIndex?.add(user!!)
-                }
-                if (user!!.lastIndex == user!!.length - 1) {
-                    asdad()
-                }
-            }
-
-
-//                for(data in snapshot.children){
-//                    val user = data.value.toString()
+//    private fun asdad() {
+//        if (listIndex != null) {
+//            listExclOffer?.clear()
+//            for (product in listIndex!!) {
 //
-//                    databaseRefProduct.child(user).addListenerForSingleValueEvent(object : ValueEventListener {
+//                Log.d("@@@I", listIndex?.size.toString())
+//
+//                databaseRefProduct.child(product)
+//                    .addValueEventListener(object : ValueEventListener {
 //                        override fun onDataChange(snapshot: DataSnapshot) {
 //
-//                            Log.d("@@@@",snapshot.value.toString())
+//                            exclData = snapshot.getValue(ExclusiveOffer::class.java)
 //
-//                            val exclData = snapshot.getValue(ExclusiveOffer::class.java)
+////                            if (exclData != null) {
+////                                listExclOffer?.add(exclData)
+////                                adapterExcl?.notifyDataSetChanged()
+////                                pBExclOffer.visibility = View.GONE
+////                            }
 //
-//                            if (exclData!=null){
-//                                listExclOffer?.add(exclData)
-//                                listExclOffer?.sortBy {
-//                                    it.Id
-//                                }
-//                                adapterExcl?.notifyDataSetChanged()
+//                                listExclOffer?.add(exclData!!)
+//                            if (product.length - 1 == product.lastIndex) {
+//                                Log.d("@@@S", listExclOffer?.size.toString())
+//
+//
+//                                adapterExcl()
+////                                adapterExcl?.notifyDataSetChanged()
 //                                pBExclOffer.visibility = View.GONE
 //                            }
 //
@@ -177,15 +131,91 @@ class ShopFragment : Fragment(), ShopClickListener {
 //                        }
 //
 //                    })
-//
-//                }
 //            }
+//        }
+//    }
+
+    private fun getData() {
+
+        listExclOffer?.clear()
+        databaseRefExclOffer.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                for (data in snapshot.children) {
+                    val user = data.value.toString()
+//                    listIndex?.add(user!!)
+                    databaseRefProduct.child(user)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+
+                                Log.d("@@@@", snapshot.value.toString())
+
+                                val exclData = snapshot.getValue(ExclusiveOffer::class.java)
+
+                                if (exclData != null) {
+                                    listExclOffer?.add(exclData)
+                                    listExclOffer?.sortBy {
+                                        it.Id
+                                    }
+                                    adapterExcl?.notifyDataSetChanged()
+                                    pBExclOffer.visibility = View.GONE
+                                }
+
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                TODO("Not yet implemented")
+                            }
+
+                        })
+                }
+            }
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
             }
         })
         pBExclOffer.visibility = View.VISIBLE
+
+        listBestSelling?.clear()
+        databaseRefBestSelling.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                for (data in snapshot.children) {
+                    val user = data.value.toString()
+//                    listIndex?.add(user!!)
+                    databaseRefProduct.child(user)
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+
+                                Log.d("@@@@", snapshot.value.toString())
+
+                                val bestData = snapshot.getValue(BestSelling::class.java)
+
+                                if (bestData != null) {
+                                    listBestSelling?.add(bestData)
+                                    listBestSelling?.sortBy {
+                                        it.Id
+                                    }
+                                    adapterBest?.notifyDataSetChanged()
+                                    pBBestSelling.visibility = View.GONE
+                                }
+
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                TODO("Not yet implemented")
+                            }
+
+                        })
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+            }
+        })
+        pBBestSelling.visibility = View.VISIBLE
 
 //        println(listIndex)
 //
@@ -221,44 +251,47 @@ class ShopFragment : Fragment(), ShopClickListener {
 //        })
 
 
-        listBestSelling?.clear()
-        databaseRefBestSelling.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (data in snapshot.children) {
-                    val user = data.value.toString()
-
-                    val lastElement = snapshot.children.last().value
-
-                    databaseRefProduct.child(user)
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-
-                                val bestData = snapshot.getValue(BestSelling::class.java)
-
-                                if (bestData != null) {
-                                    listBestSelling?.add(bestData)
-                                    pBBestSelling.visibility = View.GONE
-                                }
-
-                                if (lastElement == snapshot.key) {
-                                    adapterBest()
-                                }
-
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-                                TODO("Not yet implemented")
-                            }
-                        })
-
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
-            }
-        })
-        pBBestSelling.visibility = View.VISIBLE
+//        listBestSelling?.clear()
+//        databaseRefBestSelling.addValueEventListener(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+////                bestIndex?.clear()
+//                for (data in snapshot.children) {
+//                    val user = data.value.toString()
+//
+//
+//                    val lastElement = snapshot.children.last().value
+//
+//                    databaseRefProduct.child(user)
+//                        .addListenerForSingleValueEvent(object : ValueEventListener {
+//                            override fun onDataChange(snapshot: DataSnapshot) {
+//
+//                                val bestData = snapshot.getValue(BestSelling::class.java)
+//
+//                                if (bestData != null) {
+//                                    listBestSelling?.add(bestData)
+//                                    listBestSelling?.sortBy { it.Id }
+//                                    pBBestSelling.visibility = View.GONE
+//                                }
+//
+//                                if (lastElement == snapshot.key) {
+//                                    adapterBest()
+//                                }
+//
+//                            }
+//
+//                            override fun onCancelled(error: DatabaseError) {
+//                                TODO("Not yet implemented")
+//                            }
+//                        })
+//
+//                }
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+//            }
+//        })
+//        pBBestSelling.visibility = View.VISIBLE
 
 
     }
