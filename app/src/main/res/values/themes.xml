@@ -39,6 +39,17 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
+        <item name="android:background">@drawable/dialog_rounded_corners</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="FailedDialogTheme">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
+
 
 
 </resources>

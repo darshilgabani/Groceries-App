@@ -1,21 +1,29 @@
 package com.biz.evaluation3groceriesapp.fragment
 
+import android.app.AlertDialog
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.adapter.CartAdapter
 import com.biz.evaluation3groceriesapp.clicklistener.CartClickListener
 import com.biz.evaluation3groceriesapp.modelclass.Cart
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.database.*
+import org.w3c.dom.Text
 
 class CartFragment : Fragment(), CartClickListener {
 
@@ -41,16 +49,69 @@ class CartFragment : Fragment(), CartClickListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_cart, container, false)
 
-
         initVar(view)
 
         getData()
+
+        onClick()
 
         setLayout()
 
         adapterCart()
 
         return view
+    }
+
+    private fun onClick() {
+        checkOutButton.setOnClickListener {
+            val dialog = BottomSheetDialog(requireContext(),R.style.BottomSheetDialogTheme)
+            val view = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_dialog, null)
+
+            val priceTextView = view.findViewById<TextView>(R.id.priceTextView)
+            val placeOrderButton = view.findViewById<CardView>(R.id.placeOrderButton)
+            val closeButton = view.findViewById<ImageView>(R.id.closeButton)
+
+
+            val behavior = dialog.behavior
+            dialog.setCancelable(true)
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+            priceTextView.text = "$ $formattedPrice"
+
+            closeButton.setOnClickListener {
+                val alertDialog = AlertDialog.Builder(requireContext(),R.style.FailedDialogTheme)
+                val dialogLayout = layoutInflater.inflate(R.layout.failed_dialog, null)
+                alertDialog.setView(dialogLayout)
+                val failedDialog = alertDialog.create()
+                failedDialog.setCancelable(true)
+
+                val dialogCloseButton = dialogLayout.findViewById<ImageView>(R.id.dialogCloseButton)
+                val backHomeTextView = dialogLayout.findViewById<TextView>(R.id.backHomeTextView)
+
+                dialogCloseButton.setOnClickListener {
+                    failedDialog.dismiss()
+                }
+
+                backHomeTextView.setOnClickListener {
+                    failedDialog.dismiss()
+                    dialog.dismiss()
+                    Navigation.findNavController(requireView()).navigate(R.id.action_cartFragment_to_shopFragment)
+                }
+
+                failedDialog.show()
+
+            }
+
+            placeOrderButton.setOnClickListener {
+                Toast.makeText(requireContext(), "Order Placed Successfully", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+                Navigation.findNavController(requireView()).navigate(R.id.action_cartFragment_to_orderAcceptFragment)
+            }
+
+            dialog.setContentView(view)
+            dialog.show()
+
+        }
     }
 
     private fun getData() {

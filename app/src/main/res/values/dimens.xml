@@ -8,4 +8,10 @@
 
     <dimen name="startProductDetails">18dp</dimen>
     <dimen name="endProductDetails">18dp</dimen>
+
+
+    <dimen name="bottomSheetTextViewEnd">15dp</dimen>
+    <dimen name="bottomSheetTop">15dp</dimen>
+    <dimen name="rightArrowBottomSheetWidth">18dp</dimen>
+    <dimen name="rightArrowBottomSheetHeight">18dp</dimen>
 </resources>

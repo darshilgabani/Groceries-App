@@ -62,3 +62,19 @@ data class Cart(
     var Weight: String = "",
     var ItemCount: Int = 0
 )
+
+data class Favourite(
+    var Id:String = "",
+    var Name: String = "",
+    var Price: String = "",
+    var Url: String = "",
+    var Weight: String = "",
+)
+
+data class Explore(
+    var Id:String = "",
+    var Name: String = "",
+    var Url: String = "",
+    var BgColor: String = "",
+    var BdColor: String = "",
+)

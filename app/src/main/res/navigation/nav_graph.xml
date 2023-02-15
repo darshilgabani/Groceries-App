@@ -21,22 +21,41 @@
         android:id="@+id/exploreFragment"
         android:name="com.biz.evaluation3groceriesapp.fragment.ExploreFragment"
         android:label="fragment_explore"
-        tools:layout="@layout/fragment_explore" />
+        tools:layout="@layout/fragment_explore" >
+        <action
+            android:id="@+id/action_exploreFragment_to_categoriesProductFragment"
+            app:destination="@id/categoriesProductFragment" />
+    </fragment>
     <fragment
         android:id="@+id/cartFragment"
         android:name="com.biz.evaluation3groceriesapp.fragment.CartFragment"
         android:label="fragment_cart"
-        tools:layout="@layout/fragment_cart" />
+        tools:layout="@layout/fragment_cart" >
+        <action
+            android:id="@+id/action_cartFragment_to_orderAcceptFragment"
+            app:destination="@id/orderAcceptFragment" />
+        <action
+            android:id="@+id/action_cartFragment_to_shopFragment"
+            app:destination="@id/shopFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favouriteFragment"
         android:name="com.biz.evaluation3groceriesapp.fragment.FavouriteFragment"
         android:label="fragment_favourite"
-        tools:layout="@layout/fragment_favourite" />
+        tools:layout="@layout/fragment_favourite" >
+        <action
+            android:id="@+id/action_favouriteFragment_to_productDetailsFragment2"
+            app:destination="@id/productDetailsFragment2" />
+    </fragment>
     <fragment
         android:id="@+id/accountFragment"
         android:name="com.biz.evaluation3groceriesapp.fragment.AccountFragment"
         android:label="fragment_account"
-        tools:layout="@layout/fragment_account" />
+        tools:layout="@layout/fragment_account" >
+        <action
+            android:id="@+id/action_accountFragment_to_loginActivity"
+            app:destination="@id/loginActivity" />
+    </fragment>
 
     <fragment
         android:id="@+id/productDetailsFragment2"
@@ -50,4 +69,23 @@
             android:name="name"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/orderAcceptFragment"
+        android:name="com.biz.evaluation3groceriesapp.fragment.OrderAcceptFragment"
+        android:label="fragment_orderaccept"
+        tools:layout="@layout/fragment_orderaccept" >
+        <action
+            android:id="@+id/action_orderAcceptFragment_to_shopFragment2"
+            app:destination="@id/shopFragment" />
+    </fragment>
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.biz.evaluation3groceriesapp.activity.LoginActivity"
+        android:label="activity_login"
+        tools:layout="@layout/activity_login" />
+    <fragment
+        android:id="@+id/categoriesProductFragment"
+        android:name="com.biz.evaluation3groceriesapp.fragment.CategoriesProductFragment"
+        android:label="fragment_categoriesproduct"
+        tools:layout="@layout/fragment_categoriesproduct" />
 </navigation>

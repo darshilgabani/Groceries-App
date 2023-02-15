@@ -46,7 +46,9 @@ class SplashActivity : AppCompatActivity() {
         val data = sharedPreferences.getInt("LoggedIn",10)
         if (data == 1){
             startActivity(Intent(this, MainActivity::class.java))
-        }else{
+        } else if (data == 2){
+            startActivity(Intent(this, LoginActivity::class.java))
+        } else {
             startActivity(Intent(this, WelcomeActivity::class.java))
         }
     }

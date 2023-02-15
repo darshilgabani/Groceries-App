@@ -124,10 +124,12 @@ class ProductDetailsFragment : Fragment() {
     }
 
     private fun setData() {
-        Glide.with(requireContext().applicationContext)
-            .load(productData?.Url)
-            .placeholder(R.drawable.app_logo)
-            .into(productImageView!!)
+        if (isAdded) {
+            Glide.with(requireContext().applicationContext)
+                .load(productData?.Url)
+                .placeholder(R.drawable.app_logo)
+                .into(productImageView!!)
+        }
 
         nameTextView?.text = productData?.Name
         weightTextView?.text = productData?.Weight
