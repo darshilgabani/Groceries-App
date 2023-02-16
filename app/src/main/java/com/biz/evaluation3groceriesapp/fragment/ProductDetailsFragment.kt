@@ -1,6 +1,8 @@
 package com.biz.evaluation3groceriesapp.fragment
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +17,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.*
 
 class ProductDetailsFragment : Fragment() {
-
-    lateinit var bottomNavigationView: BottomNavigationView
     lateinit var pBLoading: ProgressBar
 
     lateinit var skeletonLoading: LottieAnimationView
@@ -180,6 +180,7 @@ class ProductDetailsFragment : Fragment() {
         databaseRefProduct = FirebaseDatabase.getInstance().getReference("Products")
         databaseRefFavourite = FirebaseDatabase.getInstance().reference.child("Favourite")
         databaseRefAddToCart = FirebaseDatabase.getInstance().reference.child("AddToCart")
+
     }
 
     private fun addFavourite(id: String, addButtonImage: ImageView) {
@@ -222,20 +223,22 @@ class ProductDetailsFragment : Fragment() {
 
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
-        bottomNavigationView.visibility = View.GONE
-    }
-
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        Log.d("@@@*","onCreate")
+//        bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
+//        bottomNavigationView.visibility = View.GONE
+//    }
+//
 //    override fun onDestroy() {
 //        super.onDestroy()
+//        Log.d("@@@*","onDestroy")
 //        bottomNavigationView.visibility = View.VISIBLE
 //    }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        bottomNavigationView.visibility = View.VISIBLE
-    }
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        bottomNavigationView.visibility = View.VISIBLE
+//    }
 
 }

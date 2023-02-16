@@ -38,15 +38,4 @@ class OrderAcceptFragment : Fragment() {
         backHomeTextView = view.findViewById(R.id.backHomeTextView)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
-        bottomNavigationView.visibility = View.GONE
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        bottomNavigationView.visibility = View.VISIBLE
-    }
-
 }

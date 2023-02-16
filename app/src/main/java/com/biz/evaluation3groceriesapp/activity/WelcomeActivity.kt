@@ -3,7 +3,11 @@ package com.biz.evaluation3groceriesapp.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.cardview.widget.CardView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.biz.evaluation3groceriesapp.R
 
 class WelcomeActivity : AppCompatActivity() {
@@ -26,5 +30,11 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun initVar() {
         getStartedButton = findViewById(R.id.getStartedButton)
+
+//        WindowCompat.setDecorFitsSystemWindows(window, true)
+//        val controller = WindowInsetsControllerCompat(window, View(this))
+//        controller.hide(WindowInsetsCompat.Type.statusBars())
+//        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
     }
 }

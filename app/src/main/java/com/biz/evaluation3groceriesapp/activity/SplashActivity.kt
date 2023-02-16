@@ -6,8 +6,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.View
+import android.view.WindowInsets
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.biz.evaluation3groceriesapp.MainActivity
 import com.biz.evaluation3groceriesapp.R
 
@@ -34,19 +41,23 @@ class SplashActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             checkLogin()
             finish()
-        },1000)
+        }, 1000)
     }
 
     private fun initVar() {
         sharedPreferences = getSharedPreferences("Login Data", MODE_PRIVATE)
         editSharedPreferences = sharedPreferences.edit()
+
+        val controller = WindowInsetsControllerCompat(window, View(this))
+        controller.hide(WindowInsetsCompat.Type.statusBars())
     }
 
-    private fun checkLogin(){
-        val data = sharedPreferences.getInt("LoggedIn",10)
-        if (data == 1){
+
+    private fun checkLogin() {
+        val data = sharedPreferences.getInt("LoggedIn", 10)
+        if (data == 1) {
             startActivity(Intent(this, MainActivity::class.java))
-        } else if (data == 2){
+        } else if (data == 2) {
             startActivity(Intent(this, LoginActivity::class.java))
         } else {
             startActivity(Intent(this, WelcomeActivity::class.java))

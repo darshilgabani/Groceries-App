@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.clicklistener.ExploreClickListener
@@ -28,7 +27,6 @@ class ExploreAdapter(private val products: ArrayList<Explore>) :
         var productImageView = itemView.findViewById<ImageView>(R.id.productImageView)
         var nameTextView = itemView.findViewById<TextView>(R.id.nameTextView)
         var cardView = itemView.findViewById<MaterialCardView>(R.id.cardView)
-
 
         fun onBindData(data: Explore) {
             nameTextView.text = data.Name
@@ -56,7 +54,7 @@ class ExploreAdapter(private val products: ArrayList<Explore>) :
         holder.onBindData(data)
 
         holder.cardView.setOnClickListener {
-            listener?.onItemClicked(data.Id)
+            listener?.onItemClicked(data.Id,data.Name)
         }
 
     }

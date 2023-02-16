@@ -5,7 +5,9 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import com.biz.evaluation3groceriesapp.MainActivity
@@ -17,6 +19,7 @@ class LoginActivity : AppCompatActivity() {
     lateinit var emailEditText : EditText
     lateinit var passwordEditText : EditText
     lateinit var loginButton : CardView
+    lateinit var loginProgressBar : ProgressBar
 
     lateinit var databaseReference: DatabaseReference
 
@@ -37,17 +40,18 @@ class LoginActivity : AppCompatActivity() {
 
     private fun onClick() {
         loginButton.setOnClickListener {
-            loginValidation()
-        }
-
+            loginProgressBar.visibility = View.VISIBLE
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 loginData = snapshot.getValue(LoginCredentialsData::class.java)
+                loginValidation()
             }
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(this@LoginActivity, error.message, Toast.LENGTH_SHORT).show()
             }
         })
+        }
+
     }
 
     private fun loginValidation(){
@@ -61,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
             passwordEditText.setText("")
 
             editSharedPreferences.putInt("LoggedIn",1).apply()
-
+            loginProgressBar.visibility = View.INVISIBLE
             startActivity(Intent(this,MainActivity::class.java))
         }else{
             Toast.makeText(this@LoginActivity, "Please Enter Valid User Credentials ", Toast.LENGTH_SHORT).show()
@@ -72,6 +76,7 @@ class LoginActivity : AppCompatActivity() {
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         loginButton = findViewById(R.id.loginButton)
+        loginProgressBar = findViewById(R.id.loginProgressBar)
 
         sharedPreferences = getSharedPreferences("Login Data", MODE_PRIVATE)
         editSharedPreferences = sharedPreferences.edit()

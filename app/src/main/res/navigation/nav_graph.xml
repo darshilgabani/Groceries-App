@@ -16,6 +16,9 @@
         <argument
             android:name="id"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_shopFragment_to_categoriesProductFragment"
+            app:destination="@id/categoriesProductFragment" />
     </fragment>
     <fragment
         android:id="@+id/exploreFragment"
@@ -87,5 +90,12 @@
         android:id="@+id/categoriesProductFragment"
         android:name="com.biz.evaluation3groceriesapp.fragment.CategoriesProductFragment"
         android:label="fragment_categoriesproduct"
-        tools:layout="@layout/fragment_categoriesproduct" />
+        tools:layout="@layout/fragment_categoriesproduct" >
+        <action
+            android:id="@+id/action_categoriesProductFragment_to_exploreFragment"
+            app:destination="@id/exploreFragment" />
+        <action
+            android:id="@+id/action_categoriesProductFragment_to_productDetailsFragment2"
+            app:destination="@id/productDetailsFragment2" />
+    </fragment>
 </navigation>
