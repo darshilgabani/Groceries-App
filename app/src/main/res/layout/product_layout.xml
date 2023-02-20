@@ -24,8 +24,10 @@
 
             <ImageView
                 android:id="@+id/productImageView"
-                android:layout_width="162dp"
-                android:layout_height="98dp"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
                 android:layout_marginTop="16dp"
                 android:src="@drawable/apple_image"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -34,12 +36,16 @@
 
             <TextView
                 android:id="@+id/nameTextView"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/startMarginProduct"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/gilroybold"
                 android:text="Red Apple"
+                android:scrollHorizontally="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:ellipsize="marquee"
                 android:textColor="#181725"
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"

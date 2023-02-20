@@ -3,6 +3,7 @@ package com.biz.evaluation3groceriesapp.fragment
 import android.app.AlertDialog
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.adapter.CartAdapter
 import com.biz.evaluation3groceriesapp.clicklistener.CartClickListener
 import com.biz.evaluation3groceriesapp.modelclass.Cart
+import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.database.*
@@ -35,6 +37,7 @@ class CartFragment : Fragment(), CartClickListener {
 
     private lateinit var databaseRefAddToCart: DatabaseReference
     private lateinit var databaseRefProduct: DatabaseReference
+    private lateinit var databaseRefOrder: DatabaseReference
 
     var listCart: ArrayList<Cart>? = ArrayList()
 
@@ -64,8 +67,9 @@ class CartFragment : Fragment(), CartClickListener {
 
     private fun onClick() {
         checkOutButton.setOnClickListener {
-            val dialog = BottomSheetDialog(requireContext(),R.style.BottomSheetDialogTheme)
-            val view = LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_dialog, null)
+            val dialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
+            val view =
+                LayoutInflater.from(requireContext()).inflate(R.layout.bottom_sheet_dialog, null)
 
             val priceTextView = view.findViewById<TextView>(R.id.priceTextView)
             val placeOrderButton = view.findViewById<CardView>(R.id.placeOrderButton)
@@ -79,7 +83,7 @@ class CartFragment : Fragment(), CartClickListener {
             priceTextView.text = "$ $formattedPrice"
 
             closeButton.setOnClickListener {
-                val alertDialog = AlertDialog.Builder(requireContext(),R.style.FailedDialogTheme)
+                val alertDialog = AlertDialog.Builder(requireContext(), R.style.FailedDialogTheme)
                 val dialogLayout = layoutInflater.inflate(R.layout.failed_dialog, null)
                 alertDialog.setView(dialogLayout)
                 val failedDialog = alertDialog.create()
@@ -95,7 +99,8 @@ class CartFragment : Fragment(), CartClickListener {
                 backHomeTextView.setOnClickListener {
                     failedDialog.dismiss()
                     dialog.dismiss()
-                    Navigation.findNavController(requireView()).navigate(R.id.action_cartFragment_to_shopFragment)
+                    Navigation.findNavController(requireView())
+                        .navigate(R.id.action_cartFragment_to_shopFragment)
                 }
 
                 failedDialog.show()
@@ -103,9 +108,34 @@ class CartFragment : Fragment(), CartClickListener {
             }
 
             placeOrderButton.setOnClickListener {
-                Toast.makeText(requireContext(), "Order Placed Successfully", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-                Navigation.findNavController(requireView()).navigate(R.id.action_cartFragment_to_orderAcceptFragment)
+
+                val arrayList = ArrayList<String>()
+
+                databaseRefAddToCart.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+
+                        for (data in snapshot.children) {
+                            val productId = data.value
+                            arrayList.add(productId.toString())
+                            databaseRefProduct.child(productId.toString()).child("Added").setValue(false)
+                            databaseRefProduct.child(productId.toString()).child("ItemCount").setValue(1)
+                        }
+
+                        if (snapshot.childrenCount.toInt() == arrayList.size){
+                            databaseRefOrder.push().setValue(arrayList).addOnCompleteListener {
+                                databaseRefAddToCart.removeValue().addOnCompleteListener {
+                                    dialog.dismiss()
+                                    Toast.makeText(requireContext(), "Order Placed Successfully", Toast.LENGTH_SHORT).show()
+                                    Navigation.findNavController(requireView()).navigate(R.id.action_cartFragment_to_orderAcceptFragment)
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+                })
             }
 
             dialog.setContentView(view)
@@ -122,7 +152,7 @@ class CartFragment : Fragment(), CartClickListener {
                     if (isAdded) {
                         emptyCartTextView.visibility = View.VISIBLE
                     }
-                }else{
+                } else {
                     cartProgressBar.visibility = View.VISIBLE
                     for (data in snapshot.children) {
 
@@ -133,7 +163,6 @@ class CartFragment : Fragment(), CartClickListener {
                         databaseRefProduct.child(user).addListenerForSingleValueEvent(object :
                             ValueEventListener {
                             override fun onDataChange(snapshot: DataSnapshot) {
-
 
 
                                 val cartData = snapshot.getValue(Cart::class.java)
@@ -194,6 +223,7 @@ class CartFragment : Fragment(), CartClickListener {
 
         databaseRefProduct = FirebaseDatabase.getInstance().getReference("Products")
         databaseRefAddToCart = FirebaseDatabase.getInstance().reference.child("AddToCart")
+        databaseRefOrder = FirebaseDatabase.getInstance().reference.child("Order")
 
     }
 

@@ -90,3 +90,7 @@ data class Categories(
     var Rating: String = "",
     var Nutrition: String = ""
 )
+
+data class Order(
+    var Id:String = "",
+)

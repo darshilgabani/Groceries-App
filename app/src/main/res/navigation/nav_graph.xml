@@ -58,6 +58,9 @@
         <action
             android:id="@+id/action_accountFragment_to_loginActivity"
             app:destination="@id/loginActivity" />
+        <action
+            android:id="@+id/action_accountFragment_to_orderListFragment"
+            app:destination="@id/orderListFragment" />
     </fragment>
 
     <fragment
@@ -98,4 +101,9 @@
             android:id="@+id/action_categoriesProductFragment_to_productDetailsFragment2"
             app:destination="@id/productDetailsFragment2" />
     </fragment>
+    <fragment
+        android:id="@+id/orderListFragment"
+        android:name="com.biz.evaluation3groceriesapp.fragment.OrderListFragment"
+        android:label="fragment_orderlist"
+        tools:layout="@layout/fragment_orderlist" />
 </navigation>

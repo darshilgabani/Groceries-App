@@ -34,7 +34,7 @@ class CategoriesAdapter(private val products: ArrayList<Categories>) :
 
         fun onBindData(data: Categories) {
             nameTextView.text = data.Name
-            nameTextView.text = data.Name
+            nameTextView.isSelected = true
             weightTextView.text = data.Weight
             priceTextView.text = data.Price
 
