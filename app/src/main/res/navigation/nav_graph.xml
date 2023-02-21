@@ -105,5 +105,18 @@
         android:id="@+id/orderListFragment"
         android:name="com.biz.evaluation3groceriesapp.fragment.OrderListFragment"
         android:label="fragment_orderlist"
-        tools:layout="@layout/fragment_orderlist" />
+        tools:layout="@layout/fragment_orderlist" >
+        <action
+            android:id="@+id/action_orderListFragment_to_orderDetailsFragment"
+            app:destination="@id/orderDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetailsFragment"
+        android:name="com.biz.evaluation3groceriesapp.fragment.OrderDetailsFragment"
+        android:label="fragment_orderdetails"
+        tools:layout="@layout/fragment_orderdetails" >
+        <action
+            android:id="@+id/action_orderDetailsFragment_to_orderListFragment"
+            app:destination="@id/orderListFragment" />
+    </fragment>
 </navigation>

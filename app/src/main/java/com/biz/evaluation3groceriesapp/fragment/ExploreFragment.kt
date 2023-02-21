@@ -73,6 +73,7 @@ class ExploreFragment : Fragment(),ExploreClickListener {
 
     private fun getData() {
         listExplore?.clear()
+        exploreProgressBar.visibility = View.VISIBLE
         databaseRefExplore.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
@@ -85,7 +86,7 @@ class ExploreFragment : Fragment(),ExploreClickListener {
                 }
 
                 adapterExplore?.notifyDataSetChanged()
-
+                exploreProgressBar.visibility = View.GONE
             }
 
             override fun onCancelled(error: DatabaseError) {

@@ -19,27 +19,29 @@ import com.biz.evaluation3groceriesapp.adapter.ExploreAdapter
 import com.biz.evaluation3groceriesapp.adapter.FavouriteAdapter
 import com.biz.evaluation3groceriesapp.clicklistener.CategoriesClickListener
 import com.biz.evaluation3groceriesapp.modelclass.Categories
+import com.biz.evaluation3groceriesapp.modelclass.ExclusiveOffer
 import com.biz.evaluation3groceriesapp.modelclass.Favourite
 import com.biz.evaluation3groceriesapp.utils.addToCart
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.*
 
-class CategoriesProductFragment : Fragment(),CategoriesClickListener {
-    lateinit var categoriesTitle : TextView
-    lateinit var categoriesRecyclerView : RecyclerView
-    lateinit var categoriesProgressBar : ProgressBar
-    lateinit var backButton : ImageView
+class CategoriesProductFragment : Fragment(), CategoriesClickListener {
+    lateinit var categoriesTitle: TextView
+    lateinit var categoriesRecyclerView: RecyclerView
+    lateinit var categoriesProgressBar: ProgressBar
+    lateinit var backButton: ImageView
 
-    private lateinit var databaseRefExplore : DatabaseReference
-    private lateinit var databaseRefCategories : DatabaseReference
+    private lateinit var databaseRefExplore: DatabaseReference
+    private lateinit var databaseRefCategories: DatabaseReference
     private lateinit var databaseRefProduct: DatabaseReference
 
     var clickedId: String? = null
     var clickedName: String? = null
 
     var listCategories: ArrayList<Categories>? = ArrayList()
+    val indexList: ArrayList<String> = ArrayList()
 
-    private var adapterCategories : CategoriesAdapter? = null
+    private var adapterCategories: CategoriesAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,12 +64,14 @@ class CategoriesProductFragment : Fragment(),CategoriesClickListener {
 
     private fun onClick() {
         backButton.setOnClickListener {
-            Navigation.findNavController(requireView()).navigate(R.id.action_categoriesProductFragment_to_exploreFragment)
+            Navigation.findNavController(requireView())
+                .navigate(R.id.action_categoriesProductFragment_to_exploreFragment)
         }
     }
 
     private fun setLayout() {
-        categoriesRecyclerView.layoutManager = GridLayoutManager(context, 2, LinearLayoutManager.VERTICAL, false)
+        categoriesRecyclerView.layoutManager =
+            GridLayoutManager(context, 2, LinearLayoutManager.VERTICAL, false)
     }
 
     private fun adapterCategories() {
@@ -76,44 +80,52 @@ class CategoriesProductFragment : Fragment(),CategoriesClickListener {
         categoriesRecyclerView.adapter = adapterCategories
     }
 
-    private fun getData() {
+    private fun getProductIndex() {
         categoriesProgressBar.visibility = View.VISIBLE
+        listCategories?.clear()
         databaseRefCategories.child(clickedId!!).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-
-                for (data in snapshot.children){
-                    val user = data.value.toString()
-
-                    val lastElement = snapshot.children.last().value
-
-                    databaseRefProduct.child(user).addValueEventListener(object :
-                        ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-
-                            val favData = snapshot.getValue(Categories::class.java)
-
-                            if (favData != null) {
-                                listCategories?.add(favData)
-                                categoriesProgressBar.visibility = View.GONE
-                            }
-
-                            if (lastElement == snapshot.key) {
-                                adapterCategories?.notifyDataSetChanged()
-                            }
-
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            TODO("Not yet implemented")
-                        }
-                    })
+                for (data in snapshot.children) {
+                    val index = data.value.toString()
+                    indexList.add(index)
                 }
+                getAllData()
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+
             }
         })
+    }
+
+    private fun getAllData() {
+        databaseRefProduct.child(indexList[0])
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    val productData = snapshot.getValue(Categories::class.java)
+                    listCategories?.add(productData!!)
+                    indexList.removeAt(0)
+
+                    if (indexList.isEmpty()) {
+                        adapterCategories?.notifyDataSetChanged()
+                        categoriesProgressBar.visibility = View.GONE
+                    } else {
+                        getAllData()
+                    }
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+    }
+
+    private fun getData() {
+
+        getProductIndex()
+
     }
 
     private fun initVar(view: View) {
@@ -137,14 +149,18 @@ class CategoriesProductFragment : Fragment(),CategoriesClickListener {
         bundle.putString("ClickedID", id)
         val navController = Navigation.findNavController(requireView())
 
-        val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        val bottomNavigationView =
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.visibility = View.GONE
 
-        navController.navigate(R.id.action_categoriesProductFragment_to_productDetailsFragment2, bundle)
+        navController.navigate(
+            R.id.action_categoriesProductFragment_to_productDetailsFragment2,
+            bundle
+        )
     }
 
     override fun onAddToCartClicked(id: String, addButtonImage: ImageView) {
-        addToCart(id, addButtonImage,requireContext(),categoriesProgressBar)
+        addToCart(id, addButtonImage, requireContext(), categoriesProgressBar)
     }
 
 }

@@ -38,6 +38,7 @@
         android:text="You are not Placed Any Order!"
         android:textColor="#181725"
         android:textSize="30sp"
+        android:gravity="center_horizontal"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/orderRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"

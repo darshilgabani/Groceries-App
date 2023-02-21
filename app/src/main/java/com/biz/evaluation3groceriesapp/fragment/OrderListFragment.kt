@@ -1,6 +1,7 @@
 package com.biz.evaluation3groceriesapp.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.biz.evaluation3groceriesapp.R
@@ -66,12 +68,15 @@ class OrderListFragment : Fragment(),OrderListClickListener {
                     }
                 }else{
                     orderProgressBar.visibility = View.VISIBLE
-//                    listFav?.clear()
+                    listOrderId?.clear()
+
                     for (data in snapshot.children) {
 
                         val keys = data.key.toString()
+                        val time = data.child("Time").value.toString()
+                        val date = data.child("Date").value.toString()
 
-                        listOrderId?.add(Order(keys))
+                        listOrderId?.add(Order(keys,time,date))
 
                         if (listOrderId?.size == snapshot.childrenCount.toInt()){
                             orderProgressBar.visibility = View.GONE
@@ -99,7 +104,9 @@ class OrderListFragment : Fragment(),OrderListClickListener {
     }
 
     override fun onItemClicked(id: String) {
-        Toast.makeText(requireContext(), id, Toast.LENGTH_SHORT).show()
+        val bundle = Bundle()
+        bundle.putString("ClickedID", id)
+        Navigation.findNavController(requireView()).navigate(R.id.action_orderListFragment_to_orderDetailsFragment, bundle)
     }
 
 

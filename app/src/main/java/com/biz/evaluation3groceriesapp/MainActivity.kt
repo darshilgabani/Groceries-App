@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.categoriesProductFragment -> navView.visibility = View.GONE
                 R.id.orderAcceptFragment -> navView.visibility = View.GONE
                 R.id.orderListFragment -> navView.visibility = View.GONE
+                R.id.orderDetailsFragment -> navView.visibility = View.GONE
                 else -> navView.visibility = View.VISIBLE
             }
 

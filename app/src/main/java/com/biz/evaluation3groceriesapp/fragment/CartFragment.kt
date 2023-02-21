@@ -21,6 +21,8 @@ import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.adapter.CartAdapter
 import com.biz.evaluation3groceriesapp.clicklistener.CartClickListener
 import com.biz.evaluation3groceriesapp.modelclass.Cart
+import com.biz.evaluation3groceriesapp.utils.currentDate
+import com.biz.evaluation3groceriesapp.utils.currentTime
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -114,21 +116,51 @@ class CartFragment : Fragment(), CartClickListener {
                 databaseRefAddToCart.addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
 
+                        val newOrderRef = databaseRefOrder.push()
+
                         for (data in snapshot.children) {
+
                             val productId = data.value
                             arrayList.add(productId.toString())
-                            databaseRefProduct.child(productId.toString()).child("Added").setValue(false)
-                            databaseRefProduct.child(productId.toString()).child("ItemCount").setValue(1)
+
+                            databaseRefProduct.child(productId.toString()).child("ItemCount")
+                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        val count = snapshot.value.toString()
+                                        val productRef = newOrderRef.child("Product").child(productId.toString())
+
+                                        productRef.child("Count").setValue(count)
+                                        productRef.child("Id").setValue(productId.toString())
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {
+                                        TODO("Not yet implemented")
+                                    }
+                                })
+
+                            databaseRefProduct.child(productId.toString()).child("Added")
+                                .setValue(false)
+                            databaseRefProduct.child(productId.toString()).child("ItemCount")
+                                .setValue(1)
                         }
 
-                        if (snapshot.childrenCount.toInt() == arrayList.size){
-                            databaseRefOrder.push().setValue(arrayList).addOnCompleteListener {
-                                databaseRefAddToCart.removeValue().addOnCompleteListener {
-                                    dialog.dismiss()
-                                    Toast.makeText(requireContext(), "Order Placed Successfully", Toast.LENGTH_SHORT).show()
-                                    Navigation.findNavController(requireView()).navigate(R.id.action_cartFragment_to_orderAcceptFragment)
-                                }
+                        if (snapshot.childrenCount.toInt() == arrayList.size) {
+
+                                val currentTime = currentTime()
+                                val currentDate = currentDate()
+
+                                databaseRefOrder.child(newOrderRef.key.toString()).child("Time")
+                                    .setValue(currentTime)
+                                databaseRefOrder.child(newOrderRef.key.toString()).child("Date")
+                                    .setValue(currentDate)
+
+                            databaseRefAddToCart.removeValue().addOnCompleteListener {
+                                dialog.dismiss()
+                                Toast.makeText(requireContext(), "Order Placed Successfully", Toast.LENGTH_SHORT).show()
+                                Navigation.findNavController(requireView())
+                                    .navigate(R.id.action_cartFragment_to_orderAcceptFragment)
                             }
+
                         }
                     }
 
@@ -145,6 +177,7 @@ class CartFragment : Fragment(), CartClickListener {
     }
 
     private fun getData() {
+
         databaseRefAddToCart.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 

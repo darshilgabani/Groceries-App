@@ -93,4 +93,12 @@ data class Categories(
 
 data class Order(
     var Id:String = "",
+    var Time:String = "",
+    var Date:String = "",
+)
+
+data class OrderDetail(
+    var Name: String = "",
+    var Price: String = "",
+    var ItemCount: String = ""
 )

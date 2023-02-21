@@ -23,11 +23,14 @@ class OrderListAdapter(private val products: ArrayList<Order>) :
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var orderIdTextView = itemView.findViewById<TextView>(R.id.orderIdTextView)
+        var dateTextView = itemView.findViewById<TextView>(R.id.dateTextView)
+        var timeTextView = itemView.findViewById<TextView>(R.id.timeTextView)
         var orderListLayout = itemView.findViewById<ConstraintLayout>(R.id.orderListLayout)
-
 
         fun onBindData(data: Order) {
             orderIdTextView.text = data.Id.drop(1)
+            dateTextView.text = data.Date
+            timeTextView.text = data.Time
         }
     }
 

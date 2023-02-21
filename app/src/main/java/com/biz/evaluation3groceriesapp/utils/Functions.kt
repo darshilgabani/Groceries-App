@@ -1,16 +1,19 @@
 package com.biz.evaluation3groceriesapp.utils
 
 import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.biz.evaluation3groceriesapp.R
+import com.biz.evaluation3groceriesapp.fragment.ShopFragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.util.*
 
 lateinit var databaseRefProduct : DatabaseReference
 private lateinit var databaseRefAddToCart: DatabaseReference
@@ -52,4 +55,19 @@ fun addToCart(id: String, addButtonImage: ImageView,context:Context,pBLoading : 
             }
         })
 
+}
+
+fun currentTime() : String{
+    val currentDateTime = Calendar.getInstance().time
+    val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+    val formattedTime = timeFormat.format(currentDateTime)
+
+    return formattedTime
+}
+fun currentDate() : String{
+    val currentDateTime = Calendar.getInstance().time
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val formattedDate = dateFormat.format(currentDateTime)
+
+    return formattedDate
 }

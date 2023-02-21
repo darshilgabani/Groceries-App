@@ -16,8 +16,6 @@ class CartAdapter(private val products: ArrayList<Cart>) :
     RecyclerView.Adapter<CartAdapter.ViewHolder>() {
 
     var listener: CartClickListener? = null
-    private var count: Int? = null
-    private var totalPrice: Double = 0.0
 
     fun setSelectListener(listener: CartClickListener) {
         this.listener = listener
@@ -38,7 +36,6 @@ class CartAdapter(private val products: ArrayList<Cart>) :
         var plusButton = itemView.findViewById<CardView>(R.id.plusButton)
         var minusButton = itemView.findViewById<CardView>(R.id.minusButton)
 
-        var totalPrice: Double = 0.0
 
         fun onBindData(data: Cart) {
             nameTextView.text = data.Name
