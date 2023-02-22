@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        sharedPreferences = getSharedPreferences("Login Data", MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("GroceriesApp", MODE_PRIVATE)
 
 //        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
 //        navController = navHostFragment.navController
@@ -50,6 +50,33 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+
+        navView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.shopFragment -> {
+                    navController.navigate(R.id.shopFragment)
+                    true
+                }
+                R.id.exploreFragment -> {
+                    navController.navigate(R.id.exploreFragment)
+                    true
+                }
+                R.id.cartFragment -> {
+                    navController.navigate(R.id.cartFragment)
+                    true
+                }
+                R.id.favouriteFragment -> {
+                    navController.navigate(R.id.favouriteFragment)
+                    true
+                }
+                R.id.accountFragment -> {
+                    navController.navigate(R.id.accountFragment)
+                    true
+                }
+                else -> false
+            }
+        }
+
 
     }
 

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.airbnb.lottie.LottieAnimationView
 import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.modelclass.ProductDetails
@@ -32,6 +33,7 @@ class ProductDetailsFragment : Fragment() {
     private var detailsTextView: TextView? = null
     private var nutritionTextView: TextView? = null
     private var cartButtonTextView: TextView? = null
+    private var backButton: ImageView? = null
     private var ratingBar: RatingBar? = null
     lateinit var cartButton: CardView
 
@@ -41,6 +43,7 @@ class ProductDetailsFragment : Fragment() {
 
     var productData: ProductDetails? = null
     var clickedId: String? = null
+    private var isCartAdded: Boolean? = null
 
     private var count: Int? = null
 
@@ -56,10 +59,81 @@ class ProductDetailsFragment : Fragment() {
 
         onClick()
 
+        onPlusMinusClick()
+
         return view
     }
 
+    private fun onPlusMinusClick() {
+        plusButton?.setOnClickListener {
+            pBLoading.visibility = View.VISIBLE
+
+            databaseRefProduct.child(clickedId.toString()).child("ItemCount")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val itemCount = snapshot.value
+                        if ((itemCount as Long).toInt() == 1) {
+                            minusButton?.setImageResource(R.drawable.minus_button)
+                        }
+                        val updatedCount = (itemCount as Long).toInt() + 1
+
+                        databaseRefProduct.child(clickedId.toString()).child("ItemCount")
+                            .setValue(updatedCount)
+                            .addOnSuccessListener {
+                                countTextView?.text = updatedCount.toString()
+                                pBLoading.visibility = View.GONE
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Item Added Successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+                })
+
+        }
+
+        minusButton?.setOnClickListener {
+            pBLoading.visibility = View.VISIBLE
+            databaseRefProduct.child(clickedId.toString()).child("ItemCount")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val itemCount = snapshot.value
+
+                        if ((itemCount as Long).toInt() > 1) {
+                            val updatedCount = (itemCount as Long).toInt() - 1
+
+                            if (updatedCount ==1){
+                                minusButton!!.setImageResource(R.drawable.minus_button)
+                            }
+
+                            databaseRefProduct.child(clickedId.toString()).child("ItemCount")
+                                .setValue(updatedCount).addOnSuccessListener {
+                                    countTextView?.text = updatedCount.toString()
+                                    pBLoading.visibility = View.GONE
+                                    Toast.makeText(requireContext(), "Item Removed Successfully", Toast.LENGTH_SHORT).show()
+                            }
+
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+                })
+
+        }
+    }
+
     private fun onClick() {
+        backButton?.setOnClickListener {
+            Navigation.findNavController(requireView()).navigateUp()
+        }
+
         favButton?.setOnClickListener {
             pBLoading.visibility = View.VISIBLE
             addFavourite(clickedId!!, favButton!!)
@@ -67,41 +141,48 @@ class ProductDetailsFragment : Fragment() {
 
         cartButton.setOnClickListener {
             pBLoading.visibility = View.VISIBLE
-            databaseRefAddToCart.child(clickedId!!).setValue(clickedId)
-                .addOnSuccessListener {
-                    databaseRefProduct.child(clickedId!!).child("Added").setValue(true)
-                    databaseRefProduct.child(clickedId!!).child("ItemCount").setValue(count)
-                    pBLoading.visibility = View.INVISIBLE
-                    cartButtonTextView?.text = "Go to Cart"
-                    Toast.makeText(
-                        requireContext(),
-                        "Added to Cart Successfully",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+
+            if (isCartAdded == true) {
+                Navigation.findNavController(requireView())
+                    .navigate(R.id.action_productDetailsFragment2_to_cartFragment)
+            } else {
+                databaseRefAddToCart.child(clickedId!!).setValue(clickedId)
+                    .addOnSuccessListener {
+                        databaseRefProduct.child(clickedId!!).child("Added").setValue(true)
+                        databaseRefProduct.child(clickedId!!).child("ItemCount").setValue(count)
+                        pBLoading.visibility = View.INVISIBLE
+                        cartButtonTextView?.text = "Go to Cart"
+                        Toast.makeText(
+                            requireContext(),
+                            "Added to Cart Successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+
         }
 
-        plusButton?.setOnClickListener {
-            if (count != null) {
-                count = count!! + 1
-                countTextView?.text = count.toString()
-                if (count!! > 1) {
-                    minusButton?.setImageResource(R.drawable.enabled_minus)
-                }
-            }
-        }
+//        plusButton?.setOnClickListener {
+//            if (count != null) {
+//                count = count!! + 1
+//                countTextView?.text = count.toString()
+//                if (count!! > 1) {
+//                    minusButton?.setImageResource(R.drawable.enabled_minus)
+//                }
+//            }
+//        }
 
-        minusButton?.setOnClickListener {
-            if (count != null) {
-                if (count!! > 1) {
-                    count = count!! - 1
-                    countTextView?.text = count.toString()
-                }
-                if (count == 1) {
-                    minusButton?.setImageResource(R.drawable.minus_button)
-                }
-            }
-        }
+//        minusButton?.setOnClickListener {
+//            if (count != null) {
+//                if (count!! > 1) {
+//                    count = count!! - 1
+//                    countTextView?.text = count.toString()
+//                }
+//                if (count == 1) {
+//                    minusButton?.setImageResource(R.drawable.minus_button)
+//                }
+//            }
+//        }
     }
 
     private fun getData() {
@@ -145,6 +226,7 @@ class ProductDetailsFragment : Fragment() {
         countTextView?.text = productData?.ItemCount.toString()
 
         if (productData!!.Added == true) {
+            isCartAdded = true
             cartButtonTextView?.text = "Go to Cart"
         }
 
@@ -172,6 +254,7 @@ class ProductDetailsFragment : Fragment() {
         plusButton = view.findViewById(R.id.plusButton)
         minusButton = view.findViewById(R.id.minusButton)
         countTextView = view.findViewById(R.id.countTextView)
+        backButton = view.findViewById(R.id.backButton)
 
         skeletonLoading.visibility = View.VISIBLE
 
@@ -223,22 +306,5 @@ class ProductDetailsFragment : Fragment() {
 
     }
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        Log.d("@@@*","onCreate")
-//        bottomNavigationView = requireActivity().findViewById(R.id.bottomNavigationView)
-//        bottomNavigationView.visibility = View.GONE
-//    }
-//
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        Log.d("@@@*","onDestroy")
-//        bottomNavigationView.visibility = View.VISIBLE
-//    }
-
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        bottomNavigationView.visibility = View.VISIBLE
-//    }
 
 }

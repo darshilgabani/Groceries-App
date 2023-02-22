@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.adapter.OrderDetailAdapter
 import com.biz.evaluation3groceriesapp.adapter.OrderListAdapter
@@ -27,6 +28,8 @@ class OrderDetailsFragment : Fragment() {
     lateinit var totalPriceTextView : TextView
     lateinit var backButton : ImageView
     lateinit var orderDetailProgressBar : ProgressBar
+
+    lateinit var skeletonLoading: LottieAnimationView
 
     private lateinit var databaseRefProduct: DatabaseReference
     private lateinit var databaseRefOrder: DatabaseReference
@@ -61,13 +64,14 @@ class OrderDetailsFragment : Fragment() {
 
     private fun onClick() {
         backButton.setOnClickListener {
-            Navigation.findNavController(requireView()).navigate(R.id.action_orderDetailsFragment_to_orderListFragment)
+            Navigation.findNavController(requireView()).navigateUp()
+//                .navigate(R.id.action_orderDetailsFragment_to_orderListFragment)
         }
     }
 
 
     private fun getData() {
-
+        skeletonLoading.visibility = View.VISIBLE
         databaseRefOrder.child(clickedId.toString()).child("Product").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
@@ -95,6 +99,8 @@ class OrderDetailsFragment : Fragment() {
                                 }
                                 formattedPrice = String.format("%.2f", totalPrice)
                                 totalPriceTextView.text = "$ $formattedPrice"
+
+                                skeletonLoading.visibility = View.GONE
                             }
 
                         }
@@ -123,13 +129,15 @@ class OrderDetailsFragment : Fragment() {
         orderDetailRecyclerView.layoutManager = LinearLayoutManager(context?.applicationContext)
     }
 
-    private fun initVar(view: View) {
+    private fun     initVar(view: View) {
         clickedId = arguments?.getString("ClickedID")
         orderDetailRecyclerView = view.findViewById(R.id.orderDetailRecyclerView)
         orderTitle = view.findViewById(R.id.orderTitle)
         backButton = view.findViewById(R.id.backButton)
         totalPriceTextView = view.findViewById(R.id.totalPriceTextView)
         orderDetailProgressBar = view.findViewById(R.id.orderDetailProgressBar)
+
+        skeletonLoading = view.findViewById(R.id.skeletonLoading)
 
         databaseRefProduct = FirebaseDatabase.getInstance().getReference("Products")
         databaseRefOrder = FirebaseDatabase.getInstance().getReference("Order")

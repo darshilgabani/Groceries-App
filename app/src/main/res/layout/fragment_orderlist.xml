@@ -14,12 +14,22 @@
         android:fontFamily="@font/gilroybold"
         android:gravity="center_vertical"
         android:text="Orders History"
-        android:textColor="#181725"
+        android:textColor="@color/ThemeColorBlack"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:src="@drawable/arrow_back"
+        app:layout_constraintBottom_toBottomOf="@+id/textView5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView5" />
 
     <View
         android:id="@+id/view"
@@ -35,12 +45,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/gilroybold"
-        android:text="You are not Placed Any Order!"
-        android:textColor="#181725"
-        android:textSize="30sp"
         android:gravity="center_horizontal"
+      android:padding="30dp"
+        android:text="You are not Placed Any Order!"
+        android:textColor="@color/ThemeColorBlack"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/orderRecyclerView"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
@@ -60,10 +71,24 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateTint="@color/buttonColor"
-        android:visibility="invisible"
+        android:indeterminateTint="@color/ThemeColorGreen"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/orderRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/skeletonLoading"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view"
+android:visibility="gone"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/skeleton_loading2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

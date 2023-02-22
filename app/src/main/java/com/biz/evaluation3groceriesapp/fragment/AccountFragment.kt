@@ -40,7 +40,7 @@ class AccountFragment : Fragment() {
 
     private fun onClick() {
         logOutButton.setOnClickListener {
-            editSharedPreferences.putInt("LoggedIn",2).apply()
+            editSharedPreferences.putInt("loginPref",2).apply()
             Navigation.findNavController(requireView()).navigate(R.id.action_accountFragment_to_loginActivity)
         }
 
@@ -53,7 +53,7 @@ class AccountFragment : Fragment() {
         orderLayout = view.findViewById(R.id.orderLayout)
         logOutButton = view.findViewById(R.id.logOutButton)
 
-        sharedPreferences = requireActivity().getSharedPreferences("Login Data", AppCompatActivity.MODE_PRIVATE)
+        sharedPreferences = requireActivity().getSharedPreferences("GroceriesApp", AppCompatActivity.MODE_PRIVATE)
         editSharedPreferences = sharedPreferences.edit()
     }
 

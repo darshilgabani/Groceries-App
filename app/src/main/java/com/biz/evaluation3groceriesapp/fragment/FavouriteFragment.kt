@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.adapter.CartAdapter
 import com.biz.evaluation3groceriesapp.adapter.FavouriteAdapter
@@ -24,8 +25,12 @@ class FavouriteFragment : Fragment(),FavClickListener {
     lateinit var favProgressBar : ProgressBar
     lateinit var emptyFavTextView : TextView
 
+    val indexList: ArrayList<String> = ArrayList()
+
     private lateinit var databaseRefProduct: DatabaseReference
     private lateinit var databaseRefFavourite: DatabaseReference
+
+    lateinit var skeletonLoading: LottieAnimationView
 
     var listFav: ArrayList<Favourite>? = ArrayList()
 
@@ -39,7 +44,9 @@ class FavouriteFragment : Fragment(),FavClickListener {
 
         initVar(view)
 
-        getData()
+//        getData()
+
+        getFavIndex()
 
         setLayout()
 
@@ -58,12 +65,72 @@ class FavouriteFragment : Fragment(),FavClickListener {
         favRecyclerView.adapter = adapterFav
     }
 
+    private fun getFavIndex() {
+        skeletonLoading.visibility = View.VISIBLE
+        listFav?.clear()
+        indexList.clear()
+        databaseRefFavourite.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (!snapshot.exists()){
+                    if (isAdded){
+                        getFavIndex()
+                        emptyFavTextView.visibility = View.VISIBLE
+                        skeletonLoading.visibility = View.GONE
+                    }
+                }else {
+                    for (data in snapshot.children) {
+                        val index = data.value.toString()
+                        indexList.add(index)
+                    }
+                    if (indexList.size == snapshot.childrenCount.toInt()) {
+                        getAllData()
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
+    private fun getAllData() {
+        databaseRefProduct.child(indexList[0])
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    val favData = snapshot.getValue(Favourite::class.java)
+                    listFav?.add(favData!!)
+
+                    if (indexList.isNotEmpty()) {
+                        indexList.removeAt(0)
+                    }
+
+                    if (indexList.isEmpty()) {
+                        adapterFav?.notifyDataSetChanged()
+
+                        skeletonLoading.visibility = View.GONE
+
+                    } else {
+                        getAllData()
+                    }
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+    }
+
+
     private fun getData() {
         databaseRefFavourite.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 
                 if (!snapshot.exists()) {
                     if (isAdded) {
+                        getData()
                         emptyFavTextView.visibility = View.VISIBLE
                     }
                 }else{
@@ -112,6 +179,8 @@ class FavouriteFragment : Fragment(),FavClickListener {
         favRecyclerView = view.findViewById(R.id.favRecyclerView)
         emptyFavTextView = view.findViewById(R.id.emptyFavTextView)
         favProgressBar = view.findViewById(R.id.favProgressBar)
+
+        skeletonLoading = view.findViewById(R.id.skeletonLoading)
 
         databaseRefProduct = FirebaseDatabase.getInstance().getReference("Products")
         databaseRefFavourite = FirebaseDatabase.getInstance().getReference("Favourite")

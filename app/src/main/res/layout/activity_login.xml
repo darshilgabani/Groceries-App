@@ -69,7 +69,7 @@
             android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#181725"
+            android:textColor="@color/ThemeColorBlack"
             android:inputType="textPersonName" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -94,7 +94,7 @@
             android:id="@+id/passwordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#181725"
+            android:textColor="@color/ThemeColorBlack"
             android:inputType="textPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -109,7 +109,7 @@
         android:gravity="end"
         android:fontFamily="@font/gilroylight"
         android:text="Forgot Password?"
-        android:textColor="#181725"
+        android:textColor="@color/ThemeColorBlack"
         android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -124,7 +124,7 @@
         android:layout_height="60dp"
         android:layout_marginStart="@dimen/startMargin"
         android:layout_marginEnd="@dimen/endMargin"
-        app:cardBackgroundColor="@color/buttonColor"
+        app:cardBackgroundColor="@color/ThemeColorGreen"
         app:cardCornerRadius="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -168,7 +168,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/gilroylight"
             android:text="Don’t have an account?"
-            android:textColor="#181725"
+            android:textColor="@color/ThemeColorBlack"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -181,7 +181,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/gilroylight"
             android:text="Singup"
-            android:textColor="@color/buttonColor"
+            android:textColor="@color/ThemeColorGreen"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -197,7 +197,7 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateTint="@color/buttonColor"
+        android:indeterminateTint="@color/ThemeColorGreen"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

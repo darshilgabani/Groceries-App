@@ -22,7 +22,7 @@
         android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateTint="@color/buttonColor"
+        android:indeterminateTint="@color/ThemeColorGreen"
         app:layout_constraintBottom_toBottomOf="@+id/cartRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +36,7 @@
         android:layout_marginTop="20dp"
         android:gravity="center_vertical"
         android:text="My Cart"
-        android:textColor="#181725"
+        android:textColor="@color/ThemeColorBlack"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="65dp"
         style="@style/CartCardViewStyle"
-        app:cardBackgroundColor="@color/buttonColor"
+        app:cardBackgroundColor="@color/ThemeColorGreen"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -88,7 +88,7 @@
                         android:layout_margin="10dp"
                         android:fontFamily="@font/gilroybold"
                         android:text="Checkout"
-                        android:textColor="@color/buttonColor"
+                        android:textColor="@color/ThemeColorGreen"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -138,11 +138,25 @@
         android:fontFamily="@font/gilroybold"
         android:visibility="gone"
         android:textSize="30sp"
-        android:textColor="#181725"
+        android:textColor="@color/ThemeColorBlack"
         android:text="Your Cart is Empty!"
         app:layout_constraintBottom_toBottomOf="@+id/cartRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/skeletonLoading"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view"
+        android:visibility="gone"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/skeleton_loading2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

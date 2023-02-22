@@ -45,7 +45,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun initVar() {
-        sharedPreferences = getSharedPreferences("Login Data", MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("GroceriesApp", MODE_PRIVATE)
         editSharedPreferences = sharedPreferences.edit()
 
         val controller = WindowInsetsControllerCompat(window, View(this))
@@ -54,13 +54,13 @@ class SplashActivity : AppCompatActivity() {
 
 
     private fun checkLogin() {
-        val data = sharedPreferences.getInt("LoggedIn", 10)
-        if (data == 1) {
-            startActivity(Intent(this, MainActivity::class.java))
-        } else if (data == 2) {
-            startActivity(Intent(this, LoginActivity::class.java))
-        } else {
-            startActivity(Intent(this, WelcomeActivity::class.java))
+        val data = sharedPreferences.getInt("loginPref", 10)
+
+        when(data){
+            1 -> startActivity(Intent(this, MainActivity::class.java))
+            2 -> startActivity(Intent(this, LoginActivity::class.java))
+            else -> startActivity(Intent(this, WelcomeActivity::class.java))
         }
+
     }
 }

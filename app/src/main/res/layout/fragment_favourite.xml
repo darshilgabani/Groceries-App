@@ -14,7 +14,7 @@
         android:fontFamily="@font/gilroybold"
         android:gravity="center_vertical"
         android:text="Favourite"
-        android:textColor="#181725"
+        android:textColor="@color/ThemeColorBlack"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -47,9 +47,11 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/gilroybold"
         android:text="No Favourite item Available!"
-        android:textColor="#181725"
+        android:textColor="@color/ThemeColorBlack"
         android:textSize="30sp"
-        android:visibility="gone"
+        android:gravity="center_horizontal"
+        android:padding="30dp"
+android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/favRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,13 +62,25 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateTint="@color/buttonColor"
+        android:indeterminateTint="@color/ThemeColorGreen"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/favRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
 
-
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/skeletonLoading"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/favRecyclerView"
+        app:lottie_autoPlay="true"
+android:visibility="gone"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/skeleton_loading2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

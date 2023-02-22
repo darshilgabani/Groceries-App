@@ -13,6 +13,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.adapter.CategoriesAdapter
 import com.biz.evaluation3groceriesapp.adapter.ExploreAdapter
@@ -26,6 +27,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.*
 
 class CategoriesProductFragment : Fragment(), CategoriesClickListener {
+    private var cartAddValue: Any? = null
+
+    private var isAdded : Boolean? = null
+
+    lateinit var skeletonLoading: LottieAnimationView
+
     lateinit var categoriesTitle: TextView
     lateinit var categoriesRecyclerView: RecyclerView
     lateinit var categoriesProgressBar: ProgressBar
@@ -34,6 +41,7 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
     private lateinit var databaseRefExplore: DatabaseReference
     private lateinit var databaseRefCategories: DatabaseReference
     private lateinit var databaseRefProduct: DatabaseReference
+    private lateinit var databaseRefAddToCart: DatabaseReference
 
     var clickedId: String? = null
     var clickedName: String? = null
@@ -51,7 +59,7 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
 
         initVar(view)
 
-        getData()
+        getProductIndex()
 
         onClick()
 
@@ -64,8 +72,8 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
 
     private fun onClick() {
         backButton.setOnClickListener {
-            Navigation.findNavController(requireView())
-                .navigate(R.id.action_categoriesProductFragment_to_exploreFragment)
+            Navigation.findNavController(requireView()).navigateUp()
+//                .navigate(R.id.action_categoriesProductFragment_to_exploreFragment)
         }
     }
 
@@ -81,7 +89,8 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
     }
 
     private fun getProductIndex() {
-        categoriesProgressBar.visibility = View.VISIBLE
+//        categoriesProgressBar.visibility = View.VISIBLE
+        skeletonLoading.visibility = View.VISIBLE
         listCategories?.clear()
         databaseRefCategories.child(clickedId!!).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -89,7 +98,9 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
                     val index = data.value.toString()
                     indexList.add(index)
                 }
-                getAllData()
+                if (indexList.size == snapshot.childrenCount.toInt()) {
+                    getAllData()
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -100,16 +111,25 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
 
     private fun getAllData() {
         databaseRefProduct.child(indexList[0])
-            .addValueEventListener(object : ValueEventListener {
+            .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
 
                     val productData = snapshot.getValue(Categories::class.java)
                     listCategories?.add(productData!!)
-                    indexList.removeAt(0)
+
+                    if (indexList.isNotEmpty()) {
+                        indexList.removeAt(0)
+                    }
 
                     if (indexList.isEmpty()) {
                         adapterCategories?.notifyDataSetChanged()
-                        categoriesProgressBar.visibility = View.GONE
+//                        categoriesProgressBar.visibility = View.GONE
+                        if (isAdded == true){
+                            Toast.makeText(context?.applicationContext, "Added to Cart Successfully", Toast.LENGTH_SHORT).show()
+                        }else if (isAdded == false){
+                            Toast.makeText(context?.applicationContext, "Removed From Cart to Successfully", Toast.LENGTH_SHORT).show()
+                        }
+                        skeletonLoading.visibility = View.GONE
                     } else {
                         getAllData()
                     }
@@ -122,21 +142,19 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
             })
     }
 
-    private fun getData() {
-
-        getProductIndex()
-
-    }
-
     private fun initVar(view: View) {
         categoriesTitle = view.findViewById(R.id.categoriesTitle)
         categoriesRecyclerView = view.findViewById(R.id.categoriesRecyclerView)
         categoriesProgressBar = view.findViewById(R.id.categoriesProgressBar)
         backButton = view.findViewById(R.id.backButton)
+        skeletonLoading = view.findViewById(R.id.skeletonLoading)
+
+        isAdded = null
 
         databaseRefExplore = FirebaseDatabase.getInstance().getReference("Explore")
         databaseRefCategories = FirebaseDatabase.getInstance().getReference("Categories")
         databaseRefProduct = FirebaseDatabase.getInstance().getReference("Products")
+        databaseRefAddToCart = FirebaseDatabase.getInstance().reference.child("AddToCart")
 
         clickedId = arguments?.getString("ClickedID")
         clickedName = arguments?.getString("ClickedName")
@@ -160,7 +178,46 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
     }
 
     override fun onAddToCartClicked(id: String, addButtonImage: ImageView) {
-        addToCart(id, addButtonImage, requireContext(), categoriesProgressBar)
+//        addToCart(id, addButtonImage, requireContext(), categoriesProgressBar)
+
+//        categoriesProgressBar.visibility = View.VISIBLE
+        skeletonLoading.visibility = View.VISIBLE
+
+        databaseRefProduct.child(id).child("Added")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    cartAddValue = snapshot.value
+                    if (cartAddValue == false) {
+                        databaseRefAddToCart.child(id).setValue(id).addOnSuccessListener {
+//                                categoriesProgressBar.visibility = View.VISIBLE
+
+                                databaseRefProduct.child(id).child("Added").setValue(true).addOnSuccessListener {
+                                    addButtonImage.setImageResource(R.drawable.tickmark_icon)
+                                    getProductIndex()
+                                    isAdded = true
+//                                    Toast.makeText(context?.applicationContext, "Added to Cart Successfully", Toast.LENGTH_SHORT).show()
+                                }
+
+                            }
+                    } else if (cartAddValue == true) {
+                        databaseRefAddToCart.child(id).removeValue().addOnSuccessListener {
+//                            categoriesProgressBar.visibility = View.VISIBLE
+
+                            databaseRefProduct.child(id).child("Added").setValue(false).addOnSuccessListener {
+                                addButtonImage.setImageResource(R.drawable.plus_image)
+                                getProductIndex()
+                                isAdded = false
+//                                Toast.makeText(context?.applicationContext, "Removed From Cart to Successfully", Toast.LENGTH_SHORT).show()
+                            }
+
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
     }
 
 }

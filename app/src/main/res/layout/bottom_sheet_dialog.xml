@@ -28,7 +28,7 @@
                 android:layout_marginTop="15dp"
                 android:fontFamily="@font/gilroybold"
                 android:text="Checkout"
-                android:textColor="#181725"
+                android:textColor="@color/ThemeColorBlack"
                 android:textSize="30sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -75,7 +75,7 @@
                 android:layout_marginEnd="@dimen/bottomSheetTextViewEnd"
                 android:fontFamily="@font/gilroylight"
                 android:text="Select Method"
-                android:textColor="#181725"
+                android:textColor="@color/ThemeColorBlack"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/textView14"
@@ -161,13 +161,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/view2" />
 
             <TextView
-                android:id="@+id/textView19"
+                android:id="@+id/discountTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/bottomSheetTextViewEnd"
                 android:fontFamily="@font/gilroylight"
                 android:text="Pick Discount"
-                android:textColor="#181725"
+                android:textColor="@color/ThemeColorBlack"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/textView18"
@@ -179,9 +179,9 @@
                 android:layout_width="@dimen/rightArrowBottomSheetWidth"
                 android:layout_height="@dimen/rightArrowBottomSheetHeight"
                 android:layout_marginEnd="@dimen/endMarginProduct"
-                app:layout_constraintBottom_toBottomOf="@+id/textView19"
+                app:layout_constraintBottom_toBottomOf="@+id/discountTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView19"
+                app:layout_constraintTop_toTopOf="@+id/discountTextView"
                 app:srcCompat="@drawable/right_arrow" />
 
             <View
@@ -215,7 +215,7 @@
                 android:layout_marginEnd="@dimen/bottomSheetTextViewEnd"
                 android:fontFamily="@font/gilroylight"
                 android:text="$0.0"
-                android:textColor="#181725"
+                android:textColor="@color/ThemeColorBlack"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/textView20"
@@ -262,7 +262,7 @@
                 android:layout_marginStart="@dimen/startMarginProduct"
                 android:fontFamily="@font/gilroylight"
                 android:text="Terms "
-                android:textColor="#181725"
+                android:textColor="@color/ThemeColorBlack"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView23" />
@@ -284,7 +284,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/gilroylight"
                 android:text="Conditions"
-                android:textColor="#181725"
+                android:textColor="@color/ThemeColorBlack"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@+id/textView25"
                 app:layout_constraintTop_toBottomOf="@+id/textView23" />
@@ -295,7 +295,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_margin="30dp"
-                app:cardBackgroundColor="@color/buttonColor"
+                app:cardBackgroundColor="@color/ThemeColorGreen"
                 app:cardCornerRadius="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

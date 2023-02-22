@@ -6,12 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.adapter.FavouriteAdapter
 import com.biz.evaluation3groceriesapp.adapter.OrderListAdapter
@@ -25,6 +27,9 @@ class OrderListFragment : Fragment(),OrderListClickListener {
     lateinit var orderRecyclerView: RecyclerView
     lateinit var emptyOrderTextView: TextView
     lateinit var orderProgressBar: ProgressBar
+    lateinit var backButton : ImageView
+
+    lateinit var skeletonLoading: LottieAnimationView
 
     var listOrderId: ArrayList<Order>? = ArrayList()
 
@@ -42,11 +47,19 @@ class OrderListFragment : Fragment(),OrderListClickListener {
 
         getData()
 
+        onClick()
+
         setLayout()
 
         adapterOrder()
 
         return view
+    }
+
+    private fun onClick() {
+        backButton.setOnClickListener {
+            Navigation.findNavController(requireView()).navigateUp()
+        }
     }
 
     private fun adapterOrder() {
@@ -60,14 +73,16 @@ class OrderListFragment : Fragment(),OrderListClickListener {
     }
 
     private fun getData() {
-        databaseRefOrder.addValueEventListener(object : ValueEventListener {
+        skeletonLoading.visibility = View.VISIBLE
+        databaseRefOrder.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (!snapshot.exists()) {
                     if (isAdded) {
                         emptyOrderTextView.visibility = View.VISIBLE
+                        skeletonLoading.visibility = View.GONE
                     }
                 }else{
-                    orderProgressBar.visibility = View.VISIBLE
+//                    orderProgressBar.visibility = View.VISIBLE
                     listOrderId?.clear()
 
                     for (data in snapshot.children) {
@@ -79,7 +94,8 @@ class OrderListFragment : Fragment(),OrderListClickListener {
                         listOrderId?.add(Order(keys,time,date))
 
                         if (listOrderId?.size == snapshot.childrenCount.toInt()){
-                            orderProgressBar.visibility = View.GONE
+//                            orderProgressBar.visibility = View.GONE
+                            skeletonLoading.visibility = View.GONE
                             adapterOrder?.notifyDataSetChanged()
                         }
                     }
@@ -98,6 +114,9 @@ class OrderListFragment : Fragment(),OrderListClickListener {
         orderRecyclerView = view.findViewById(R.id.orderRecyclerView)
         emptyOrderTextView = view.findViewById(R.id.emptyOrderTextView)
         orderProgressBar = view.findViewById(R.id.orderProgressBar)
+        backButton = view.findViewById(R.id.backButton)
+
+        skeletonLoading = view.findViewById(R.id.skeletonLoading)
 
         databaseRefOrder = FirebaseDatabase.getInstance().reference.child("Order")
 
