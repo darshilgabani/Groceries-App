@@ -30,11 +30,5 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun initVar() {
         getStartedButton = findViewById(R.id.getStartedButton)
-
-//        WindowCompat.setDecorFitsSystemWindows(window, true)
-//        val controller = WindowInsetsControllerCompat(window, View(this))
-//        controller.hide(WindowInsetsCompat.Type.statusBars())
-//        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-
     }
 }

@@ -1,7 +1,7 @@
 package com.biz.evaluation3groceriesapp.fragment
 
+import android.graphics.Rect
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,13 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.adapter.CategoriesAdapter
-import com.biz.evaluation3groceriesapp.adapter.ExploreAdapter
-import com.biz.evaluation3groceriesapp.adapter.FavouriteAdapter
 import com.biz.evaluation3groceriesapp.clicklistener.CategoriesClickListener
 import com.biz.evaluation3groceriesapp.modelclass.Categories
-import com.biz.evaluation3groceriesapp.modelclass.ExclusiveOffer
-import com.biz.evaluation3groceriesapp.modelclass.Favourite
-import com.biz.evaluation3groceriesapp.utils.addToCart
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.*
 
@@ -73,13 +69,35 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
     private fun onClick() {
         backButton.setOnClickListener {
             Navigation.findNavController(requireView()).navigateUp()
-//                .navigate(R.id.action_categoriesProductFragment_to_exploreFragment)
         }
     }
 
     private fun setLayout() {
-        categoriesRecyclerView.layoutManager =
-            GridLayoutManager(context, 2, LinearLayoutManager.VERTICAL, false)
+        categoriesRecyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                val totalItems = parent.adapter?.itemCount ?: 0
+                val index = parent.getChildAdapterPosition(view)
+                if (index % 2 == 0) {
+                    outRect.left = 60
+                    outRect.right = 20
+                }else {
+                    outRect.left = 20
+                    outRect.right = 60
+                }
+
+                if (totalItems % 2 == 0){
+                    if (index == totalItems - 1 || index == totalItems-2){
+                        outRect.bottom = 40
+                    }
+                }else{
+                    if (index == totalItems - 1){
+                        outRect.bottom = 40
+                    }
+                }
+            }
+        })
+
+        categoriesRecyclerView.layoutManager = GridLayoutManager(context, 2, LinearLayoutManager.VERTICAL, false)
     }
 
     private fun adapterCategories() {
@@ -89,7 +107,6 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
     }
 
     private fun getProductIndex() {
-//        categoriesProgressBar.visibility = View.VISIBLE
         skeletonLoading.visibility = View.VISIBLE
         listCategories?.clear()
         databaseRefCategories.child(clickedId!!).addValueEventListener(object : ValueEventListener {
@@ -123,12 +140,12 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
 
                     if (indexList.isEmpty()) {
                         adapterCategories?.notifyDataSetChanged()
-//                        categoriesProgressBar.visibility = View.GONE
-                        if (isAdded == true){
-                            Toast.makeText(context?.applicationContext, "Added to Cart Successfully", Toast.LENGTH_SHORT).show()
-                        }else if (isAdded == false){
-                            Toast.makeText(context?.applicationContext, "Removed From Cart to Successfully", Toast.LENGTH_SHORT).show()
-                        }
+
+//                        if (isAdded == true){
+//                            Toast.makeText(context?.applicationContext, "Added to Cart Successfully", Toast.LENGTH_SHORT).show()
+//                        }else if (isAdded == false){
+//                            Toast.makeText(context?.applicationContext, "Removed From Cart to Successfully", Toast.LENGTH_SHORT).show()
+//                        }
                         skeletonLoading.visibility = View.GONE
                     } else {
                         getAllData()
@@ -178,10 +195,8 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
     }
 
     override fun onAddToCartClicked(id: String, addButtonImage: ImageView) {
-//        addToCart(id, addButtonImage, requireContext(), categoriesProgressBar)
-
-//        categoriesProgressBar.visibility = View.VISIBLE
-        skeletonLoading.visibility = View.VISIBLE
+//        skeletonLoading.visibility = View.VISIBLE
+        categoriesProgressBar.visibility = View.VISIBLE
 
         databaseRefProduct.child(id).child("Added")
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -189,25 +204,22 @@ class CategoriesProductFragment : Fragment(), CategoriesClickListener {
                     cartAddValue = snapshot.value
                     if (cartAddValue == false) {
                         databaseRefAddToCart.child(id).setValue(id).addOnSuccessListener {
-//                                categoriesProgressBar.visibility = View.VISIBLE
-
                                 databaseRefProduct.child(id).child("Added").setValue(true).addOnSuccessListener {
                                     addButtonImage.setImageResource(R.drawable.tickmark_icon)
-                                    getProductIndex()
-                                    isAdded = true
-//                                    Toast.makeText(context?.applicationContext, "Added to Cart Successfully", Toast.LENGTH_SHORT).show()
+//                                    getProductIndex()
+//                                    isAdded = true
+                                    categoriesProgressBar.visibility = View.GONE
                                 }
 
                             }
                     } else if (cartAddValue == true) {
                         databaseRefAddToCart.child(id).removeValue().addOnSuccessListener {
-//                            categoriesProgressBar.visibility = View.VISIBLE
 
                             databaseRefProduct.child(id).child("Added").setValue(false).addOnSuccessListener {
                                 addButtonImage.setImageResource(R.drawable.plus_image)
-                                getProductIndex()
-                                isAdded = false
-//                                Toast.makeText(context?.applicationContext, "Removed From Cart to Successfully", Toast.LENGTH_SHORT).show()
+//                                getProductIndex()
+//                                isAdded = false
+                                categoriesProgressBar.visibility = View.GONE
                             }
 
                         }

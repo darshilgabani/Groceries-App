@@ -37,7 +37,7 @@
                 android:fontFamily="@font/gilroybold"
                 android:gravity="center_vertical"
                 android:layout_marginStart="10dp"
-                android:text="Please Enter Promo Code"
+                android:text="Enter Promo Code"
                 android:textColor="@color/ThemeColorBlack"
                 android:textSize="20sp"
                 android:textStyle="bold"

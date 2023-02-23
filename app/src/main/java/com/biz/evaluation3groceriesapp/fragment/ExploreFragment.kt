@@ -1,5 +1,6 @@
 package com.biz.evaluation3groceriesapp.fragment
 
+import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -48,21 +49,32 @@ class ExploreFragment : Fragment(),ExploreClickListener {
 
     private fun setLayout() {
         gridLayoutManager = GridLayoutManager(context, 2, LinearLayoutManager.VERTICAL, false)
-        exploreRecyclerView.addItemDecoration(EvenIndexItemDecoration())
-        exploreRecyclerView.layoutManager = gridLayoutManager
-    }
 
-    class EvenIndexItemDecoration : RecyclerView.ItemDecoration() {
-        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-            val index = parent.getChildAdapterPosition(view)
-            if (index % 2 == 0) {
-                outRect.left = 60
-                outRect.right = 20
-            }else {
-                outRect.left = 20
-                outRect.right = 60
+        exploreRecyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                val totalItems = parent.adapter?.itemCount ?: 0
+                val index = parent.getChildAdapterPosition(view)
+                if (index % 2 == 0) {
+                    outRect.left = 60
+                    outRect.right = 20
+                }else {
+                    outRect.left = 20
+                    outRect.right = 60
+                }
+
+                if (totalItems % 2 == 0){
+                    if (index == totalItems - 1 || index == totalItems-2){
+                        outRect.bottom = 40
+                    }
+                }else{
+                    if (index == totalItems - 1){
+                        outRect.bottom = 40
+                    }
+                }
             }
-        }
+        })
+
+        exploreRecyclerView.layoutManager = gridLayoutManager
     }
 
     private fun adapterExplore() {

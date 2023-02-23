@@ -44,8 +44,6 @@ class FavouriteFragment : Fragment(),FavClickListener {
 
         initVar(view)
 
-//        getData()
-
         getFavIndex()
 
         setLayout()
@@ -121,58 +119,6 @@ class FavouriteFragment : Fragment(),FavClickListener {
                     TODO("Not yet implemented")
                 }
             })
-    }
-
-
-    private fun getData() {
-        databaseRefFavourite.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                
-                if (!snapshot.exists()) {
-                    if (isAdded) {
-                        getData()
-                        emptyFavTextView.visibility = View.VISIBLE
-                    }
-                }else{
-                    favProgressBar.visibility = View.VISIBLE
-                    listFav?.clear()
-                    for (data in snapshot.children) {
-
-                        val user = data.value.toString()
-
-                        val lastElement = snapshot.children.last().value
-
-                        databaseRefProduct.child(user).addValueEventListener(object :
-                            ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-
-                                val favData = snapshot.getValue(Favourite::class.java)
-
-                                if (favData != null) {
-                                    listFav?.add(favData)
-                                    favProgressBar.visibility = View.GONE
-                                }
-
-                                if (lastElement == snapshot.key) {
-                                    adapterFav?.notifyDataSetChanged()
-                                }
-
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-                                TODO("Not yet implemented")
-                            }
-                        })
-
-                    }
-                }
-                
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-        })
     }
 
     private fun initVar(view: View) {

@@ -57,9 +57,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/arrow_back"
+        android:layout_marginStart="25sp"
         app:layout_constraintBottom_toBottomOf="@+id/categoriesTitle"
-        app:layout_constraintEnd_toStartOf="@+id/categoriesTitle"
-        app:layout_constraintHorizontal_bias="0.15"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/categoriesTitle" />
 

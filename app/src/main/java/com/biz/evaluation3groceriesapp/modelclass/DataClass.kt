@@ -1,10 +1,5 @@
 package com.biz.evaluation3groceriesapp.modelclass
 
-data class LoginCredentialsData(
-    var email : String = "",
-    var password : String = ""
-)
-
 data class ExclusiveOffer(
     var Id:String = "",
     var Added:Boolean? = null,
@@ -34,16 +29,6 @@ data class ProductDetails(
 data class BestSelling(
     var Id:String = "",
     var Added:Boolean? = null,
-    var Name: String = "",
-    var Price: String = "",
-    var Url: String = "",
-    var Weight: String = "",
-    var Details: String = "",
-    var Rating: String = "",
-    var Nutrition: String = ""
-)
-
-data class AddCart(
     var Name: String = "",
     var Price: String = "",
     var Url: String = "",
@@ -95,6 +80,9 @@ data class Order(
     var Id:String = "",
     var Time:String = "",
     var Date:String = "",
+    var ItemTotal:String = "",
+    var GrandTotal:String = "",
+    var DiscountPrice:String = "",
 )
 
 data class OrderDetail(

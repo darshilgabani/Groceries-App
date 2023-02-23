@@ -7,9 +7,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.biz.evaluation3groceriesapp.R
-import com.biz.evaluation3groceriesapp.clicklistener.FavClickListener
 import com.biz.evaluation3groceriesapp.clicklistener.OrderListClickListener
-import com.biz.evaluation3groceriesapp.modelclass.Favourite
 import com.biz.evaluation3groceriesapp.modelclass.Order
 
 class OrderListAdapter(private val products: ArrayList<Order>) :
@@ -46,7 +44,7 @@ class OrderListAdapter(private val products: ArrayList<Order>) :
         holder.onBindData(data)
 
         holder.orderListLayout.setOnClickListener {
-            listener?.onItemClicked(data.Id)
+            listener?.onItemClicked(data)
         }
 
     }

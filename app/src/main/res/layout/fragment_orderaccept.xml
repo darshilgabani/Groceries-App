@@ -18,7 +18,7 @@
         app:layout_constraintHorizontal_bias="0.35"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.110000014" />
+        app:layout_constraintVertical_bias="0.19999999" />
 
     <TextView
         android:id="@+id/totalPriceTextView"

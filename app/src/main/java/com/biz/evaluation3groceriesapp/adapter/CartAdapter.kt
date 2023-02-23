@@ -40,7 +40,6 @@ class CartAdapter(private val products: ArrayList<Cart>) :
         fun onBindData(data: Cart) {
             nameTextView.text = data.Name
             weightTextView.text = data.Weight
-//            priceTextView.text = data.Price
             countTextView.text = data.ItemCount.toString()
 
             val timesPrice = data.Price.drop(1).toDouble().times(data.ItemCount)
@@ -79,47 +78,13 @@ class CartAdapter(private val products: ArrayList<Cart>) :
             listener?.onCloseButtonClicked(data.Id)
         }
 
-//        count=0
-//        count = data.ItemCount
         holder.plusButton.setOnClickListener {
-
-//            if (count != null) {
-//                count = count!! + 1
-//
-//                timesPrice(data, holder, count!!)
-//
-//                holder.countTexView.text = count.toString()
-//                if (count!! > 1) {
-//                    holder.minusImageView.setImageResource(R.drawable.enabled_minus)
-//                }
-//            }
-
             listener?.onPlusButtonClicked(data, holder)
         }
 
-
         holder.minusButton.setOnClickListener {
-//            if (count != null) {
-//                if (count!! > 1) {
-//                    count = count!! - 1
-//
-//                    timesPrice(data, holder, count!!)
-//
-//                    holder.countTextView.text = count.toString()
-//                }
-//                if (count == 1) {
-//                    holder.minusImageView.setImageResource(R.drawable.minus_button)
-//                }
-//            }
             listener?.onMinusButtonClicked(data, holder)
         }
 
     }
-
-    private fun timesPrice(data: Cart, holder: ViewHolder, count: Int) {
-        val timesPrice = data.Price.drop(1).toDouble().times(count)
-        val formattedPrice = String.format("%.2f", timesPrice)
-        holder.priceTextView.text = "$$formattedPrice"
-    }
-
 }

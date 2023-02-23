@@ -13,10 +13,6 @@ import com.biz.evaluation3groceriesapp.modelclass.OrderDetail
 class OrderDetailAdapter(private val products: ArrayList<OrderDetail>) :
     RecyclerView.Adapter<OrderDetailAdapter.ViewHolder>() {
 
-    fun getItemList(): ArrayList<OrderDetail> {
-        return products
-    }
-
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var nameTextView = itemView.findViewById<TextView>(R.id.nameTextView)
         var countTextView = itemView.findViewById<TextView>(R.id.countTextView)

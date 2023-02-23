@@ -44,7 +44,6 @@ class ProductDetailsFragment : Fragment() {
     var productData: ProductDetails? = null
     var clickedId: String? = null
     private var isCartAdded: Boolean? = null
-
     private var count: Int? = null
 
     override fun onCreateView(
@@ -118,6 +117,8 @@ class ProductDetailsFragment : Fragment() {
                                     Toast.makeText(requireContext(), "Item Removed Successfully", Toast.LENGTH_SHORT).show()
                             }
 
+                        }else{
+                            pBLoading.visibility = View.GONE
                         }
                     }
 
@@ -162,27 +163,6 @@ class ProductDetailsFragment : Fragment() {
 
         }
 
-//        plusButton?.setOnClickListener {
-//            if (count != null) {
-//                count = count!! + 1
-//                countTextView?.text = count.toString()
-//                if (count!! > 1) {
-//                    minusButton?.setImageResource(R.drawable.enabled_minus)
-//                }
-//            }
-//        }
-
-//        minusButton?.setOnClickListener {
-//            if (count != null) {
-//                if (count!! > 1) {
-//                    count = count!! - 1
-//                    countTextView?.text = count.toString()
-//                }
-//                if (count == 1) {
-//                    minusButton?.setImageResource(R.drawable.minus_button)
-//                }
-//            }
-//        }
     }
 
     private fun getData() {
@@ -305,6 +285,5 @@ class ProductDetailsFragment : Fragment() {
             })
 
     }
-
 
 }

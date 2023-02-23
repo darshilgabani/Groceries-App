@@ -11,8 +11,6 @@ import com.biz.evaluation3groceriesapp.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class OrderAcceptFragment : Fragment() {
-    lateinit var bottomNavigationView: BottomNavigationView
-
     lateinit var backHomeTextView : TextView
 
     override fun onCreateView(

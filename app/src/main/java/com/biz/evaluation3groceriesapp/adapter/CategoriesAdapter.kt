@@ -31,7 +31,6 @@ class CategoriesAdapter(private val products: ArrayList<Categories>) :
         var cardView = itemView.findViewById<CardView>(R.id.cardView)
         var addButtonImage = itemView.findViewById<ImageView>(R.id.addButtonImage)
 
-
         fun onBindData(data: Categories) {
             nameTextView.text = data.Name
             nameTextView.isSelected = true
@@ -53,7 +52,7 @@ class CategoriesAdapter(private val products: ArrayList<Categories>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.product_layout, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.exploreproduct_layout, parent, false)
         return ViewHolder(view)
     }
 

@@ -2,7 +2,6 @@ package com.biz.evaluation3groceriesapp.fragment
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,20 +11,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
-import com.biz.evaluation3groceriesapp.MainActivity
 import com.biz.evaluation3groceriesapp.R
 import com.biz.evaluation3groceriesapp.adapter.BestSellingAdapter
 import com.biz.evaluation3groceriesapp.adapter.ExclusiveOfferAdapter
 import com.biz.evaluation3groceriesapp.clicklistener.ShopClickListener
-import com.biz.evaluation3groceriesapp.modelclass.*
-import com.biz.evaluation3groceriesapp.utils.addToCart
+import com.biz.evaluation3groceriesapp.modelclass.BestSelling
+import com.biz.evaluation3groceriesapp.modelclass.ExclusiveOffer
 import com.google.firebase.database.*
 
 class ShopFragment : Fragment(), ShopClickListener {
@@ -192,19 +189,21 @@ class ShopFragment : Fragment(), ShopClickListener {
                     if (indexExclList.isEmpty()) {
                         adapterExcl?.notifyDataSetChanged()
                         pBExclOffer.visibility = View.GONE
-                        if (isAdded == true) {
-                            Toast.makeText(
-                                context?.applicationContext,
-                                "Added to Cart Successfully",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else if (isAdded == false) {
-                            Toast.makeText(
-                                context?.applicationContext,
-                                "Removed From Cart to Successfully",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+
+//                        if (isAdded == true) {
+//                            Toast.makeText(
+//                                context?.applicationContext,
+//                                "Added to Cart Successfully",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+//                        } else if (isAdded == false) {
+//                            Toast.makeText(
+//                                context?.applicationContext,
+//                                "Removed From Cart to Successfully",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+//                        }
+
                         skeletonLoading.visibility = View.GONE
                     } else {
                         getExclData()
@@ -234,19 +233,21 @@ class ShopFragment : Fragment(), ShopClickListener {
                     if (indexBestList.isEmpty()) {
                         adapterBest?.notifyDataSetChanged()
                         pBBestSelling.visibility = View.GONE
-                        if (isAdded == true) {
-                            Toast.makeText(
-                                context?.applicationContext,
-                                "Added to Cart Successfully",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else if (isAdded == false) {
-                            Toast.makeText(
-                                context?.applicationContext,
-                                "Removed From Cart to Successfully",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+
+//                        if (isAdded == true) {
+//                            Toast.makeText(
+//                                context?.applicationContext,
+//                                "Added to Cart Successfully",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+//                        } else if (isAdded == false) {
+//                            Toast.makeText(
+//                                context?.applicationContext,
+//                                "Removed From Cart to Successfully",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+//                        }
+
                         skeletonLoading.visibility = View.GONE
                     } else {
                         getBestData()
@@ -308,13 +309,9 @@ class ShopFragment : Fragment(), ShopClickListener {
     }
 
     override fun onAddToCartBestClicked(id: String, addButtonImage: ImageView) {
-//        pBLoading.visibility = View.VISIBLE
-//        getBestIndex()
+//        skeletonLoading.visibility = View.VISIBLE
 
-//        addToCart(id, addButtonImage, requireContext(), pBLoading)
-
-        skeletonLoading.visibility = View.VISIBLE
-
+        pBBestSelling.visibility = View.VISIBLE
         databaseRefProduct.child(id).child("Added")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -322,27 +319,31 @@ class ShopFragment : Fragment(), ShopClickListener {
                     if (cartAddValue == false) {
                         databaseRefAddToCart.child(id).setValue(id)
                             .addOnSuccessListener {
-//                                pBBestSelling.visibility = View.VISIBLE
                                 databaseRefProduct.child(id).child("Added").setValue(true)
                                     .addOnSuccessListener {
                                         addButtonImage.setImageResource(R.drawable.tickmark_icon)
-                                        getBestIndex()
-                                        isAdded = true
+//                                        getBestIndex()
+                                        Toast.makeText(
+                                            context?.applicationContext,
+                                            "Added to Cart Successfully",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        pBBestSelling.visibility = View.GONE
                                     }
-//                                pBLoading.visibility = View.INVISIBLE
-//                                Toast.makeText(context?.applicationContext, "Added to Cart Successfully", Toast.LENGTH_SHORT).show()
                             }
                     } else if (cartAddValue == true) {
                         databaseRefAddToCart.child(id).removeValue().addOnSuccessListener {
-//                            pBBestSelling.visibility = View.VISIBLE
                             databaseRefProduct.child(id).child("Added").setValue(false)
                                 .addOnSuccessListener {
                                     addButtonImage.setImageResource(R.drawable.plus_image)
-                                    getBestIndex()
-                                    isAdded = false
+//                                    getBestIndex()
+                                    Toast.makeText(
+                                        context?.applicationContext,
+                                        "Removed From Cart to Successfully",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    pBBestSelling.visibility = View.GONE
                                 }
-//                            pBLoading.visibility = View.INVISIBLE
-//                            Toast.makeText(context?.applicationContext, "Removed From Cart to Successfully", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -355,38 +356,40 @@ class ShopFragment : Fragment(), ShopClickListener {
     }
 
     override fun onAddToCartExclClicked(id: String, addButtonImage: ImageView) {
-//        pBLoading.visibility = View.VISIBLE
-//        addToCart(id, addButtonImage, requireContext(), pBLoading)
-
-        skeletonLoading.visibility = View.VISIBLE
-
+//        skeletonLoading.visibility = View.VISIBLE
+pBExclOffer.visibility = View.VISIBLE
         databaseRefProduct.child(id).child("Added")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     cartAddValue = snapshot.value
                     if (cartAddValue == false) {
+
                         databaseRefAddToCart.child(id).setValue(id).addOnSuccessListener {
-//                                pBExclOffer.visibility = View.VISIBLE
                             databaseRefProduct.child(id).child("Added").setValue(true)
                                 .addOnSuccessListener {
                                     addButtonImage.setImageResource(R.drawable.tickmark_icon)
-                                    getExclIndex()
-                                    isAdded = true
+//                                    getExclIndex()
+                                    Toast.makeText(
+                                        context?.applicationContext,
+                                        "Added to Cart Successfully",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    pBExclOffer.visibility = View.GONE
                                 }
-//                                pBLoading.visibility = View.INVISIBLE
-//                                Toast.makeText(context?.applicationContext, "Added to Cart Successfully", Toast.LENGTH_SHORT).show()
                         }
                     } else if (cartAddValue == true) {
                         databaseRefAddToCart.child(id).removeValue().addOnSuccessListener {
-//                            pBExclOffer.visibility = View.VISIBLE
                             databaseRefProduct.child(id).child("Added").setValue(false)
                                 .addOnSuccessListener {
                                     addButtonImage.setImageResource(R.drawable.plus_image)
-                                    getExclIndex()
-                                    isAdded = false
+//                                    getExclIndex()
+                                    Toast.makeText(
+                                        context?.applicationContext,
+                                        "Removed From Cart to Successfully",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    pBExclOffer.visibility = View.GONE
                                 }
-//                            pBLoading.visibility = View.INVISIBLE
-//                            Toast.makeText(context?.applicationContext, "Removed From Cart to Successfully", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
