@@ -367,11 +367,6 @@ bottomSheetProgressBar.visibility = View.VISIBLE
 
                         skeletonLoading.visibility = View.GONE
 
-                        if (itemAdded == true){
-                            Toast.makeText(requireContext(), "Item Added Successfully", Toast.LENGTH_SHORT).show()
-                        }else if (itemAdded == false){
-                            Toast.makeText(requireContext(), "Item Removed Successfully", Toast.LENGTH_SHORT).show()
-                        }
                     } else {
                         getAllData()
                     }
@@ -410,33 +405,31 @@ bottomSheetProgressBar.visibility = View.VISIBLE
 
     }
 
-    override fun onCloseButtonClicked(id: String) {
+    override fun onCloseButtonClicked(data : Cart) {
         skeletonLoading.visibility = View.VISIBLE
-        databaseRefAddToCart.child(id).removeValue().addOnSuccessListener {
-            databaseRefProduct.child(id).child("Added").setValue(false).addOnSuccessListener {
+        databaseRefAddToCart.child(data.Id).removeValue().addOnSuccessListener {
+            databaseRefProduct.child(data.Id).child("Added").setValue(false).addOnSuccessListener {
 
-                Toast.makeText(
-                    requireContext().applicationContext,
-                    "Removed From Cart to Successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext().applicationContext, "Removed From Cart to Successfully", Toast.LENGTH_SHORT).show()
                 getCartProductIndex()
             }
         }
     }
 
     override fun onPlusButtonClicked(data: Cart, holder: CartAdapter.ViewHolder) {
-        skeletonLoading.visibility = View.VISIBLE
+        cartProgressBar.visibility = View.VISIBLE
         databaseRefProduct.child(data.Id).child("ItemCount")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val itemCount = snapshot.value
 
-                    if ((itemCount as Long).toInt() == 1) {
-                        holder.minusImageView.setImageResource(R.drawable.minus_button)
-                    }
+                    val updatedCount = (itemCount as Long).toInt() + 1
 
-                    val updatedCount = itemCount.toInt() + 1
+                    if (updatedCount == 1){
+                        holder.minusImageView.setImageResource(R.drawable.minus_button)
+                    }else{
+                        holder.minusImageView.setImageResource(R.drawable.enabled_minus)
+                    }
 
                     databaseRefProduct.child(data.Id).child("ItemCount").setValue(updatedCount)
                         .addOnSuccessListener {
@@ -444,9 +437,13 @@ bottomSheetProgressBar.visibility = View.VISIBLE
                             timesPrice(data, holder, updatedCount)
 
                             holder.countTextView.text = updatedCount.toString()
-                            getCartProductIndex()
 
-                            itemAdded = true
+                            val newPrice  = formattedPrice?.toDouble()?.plus(data.Price.drop(1).toDouble())
+                            formattedPrice = String.format("%.2f", newPrice)
+                            totalPriceTextView.text = "$ $formattedPrice"
+                            cartProgressBar.visibility = View.GONE
+                            Toast.makeText(requireContext(), "Item Added Successfully", Toast.LENGTH_SHORT).show()
+
                         }
 
                 }
@@ -460,22 +457,21 @@ bottomSheetProgressBar.visibility = View.VISIBLE
 
     override fun onMinusButtonClicked(data: Cart, holder: CartAdapter.ViewHolder) {
 
-        if (data.ItemCount > 1) {
-            skeletonLoading.visibility = View.VISIBLE
-        }
         databaseRefProduct.child(data.Id).child("ItemCount")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val itemCount = snapshot.value
 
-                    if ((itemCount as Long).toInt() == 1) {
-                        holder.minusImageView.setImageResource(R.drawable.minus_button)
-                    }
-
-
-                    if (itemCount.toInt() > 1) {
+                    if ((itemCount as Long).toInt() > 1) {
+                        cartProgressBar.visibility = View.VISIBLE
 
                         val updatedCount = (itemCount as Long).toInt() - 1
+
+                        if (updatedCount == 1){
+                            holder.minusImageView.setImageResource(R.drawable.minus_button)
+                        }else{
+                            holder.minusImageView.setImageResource(R.drawable.enabled_minus)
+                        }
 
                         databaseRefProduct.child(data.Id).child("ItemCount").setValue(updatedCount)
                             .addOnSuccessListener {
@@ -484,9 +480,11 @@ bottomSheetProgressBar.visibility = View.VISIBLE
 
                                 holder.countTextView.text = updatedCount.toString()
 
-                                getCartProductIndex()
-
-                                itemAdded = false
+                                val newPrice  = formattedPrice?.toDouble()?.minus(data.Price.drop(1).toDouble())
+                                formattedPrice = String.format("%.2f", newPrice)
+                                totalPriceTextView.text = "$ $formattedPrice"
+                                cartProgressBar.visibility = View.GONE
+                                Toast.makeText(requireContext(), "Item Removed Successfully", Toast.LENGTH_SHORT).show()
                             }
                     }
 

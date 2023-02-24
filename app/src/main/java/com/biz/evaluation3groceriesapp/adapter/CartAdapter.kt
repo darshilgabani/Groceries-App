@@ -75,7 +75,7 @@ class CartAdapter(private val products: ArrayList<Cart>) :
         holder.onBindData(data)
 
         holder.closeButton.setOnClickListener {
-            listener?.onCloseButtonClicked(data.Id)
+            listener?.onCloseButtonClicked(data)
         }
 
         holder.plusButton.setOnClickListener {
