@@ -38,12 +38,15 @@ class LoginActivity : AppCompatActivity() {
 
         onClick()
 
+
     }
 
     private fun onBackPress() {
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(false) {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                finishAffinity()
+                if (sharedPreferences.getInt("loginPref", 0) == 2) {
+                    finishAffinity()
+                }
             }
         })
     }
@@ -55,9 +58,12 @@ class LoginActivity : AppCompatActivity() {
             emailEdit = emailEditText.text.toString()
             passwordEdit = passwordEditText.text.toString()
             
-            if (emailEdit =="" && passwordEdit ==""){
-                Toast.makeText(this, "Please Enter Email and Password!", Toast.LENGTH_SHORT).show()
-            }else{
+            if (emailEdit ==""){
+                Toast.makeText(this, "Please Enter Email", Toast.LENGTH_SHORT).show()
+            }else if (passwordEdit == ""){
+                Toast.makeText(this, "Please Enter Password!", Toast.LENGTH_SHORT).show()
+            } else{
+
                 loginProgressBar.visibility = View.VISIBLE
                 databaseReference.addValueEventListener(object : ValueEventListener {
 
@@ -78,15 +84,19 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginValidation() {
-        if (emailEdit == email && passwordEdit == password) {
+
+        if (emailEdit != email){
+            loginProgressBar.visibility = View.INVISIBLE
+            Toast.makeText(this, "Please Enter Valid Email", Toast.LENGTH_SHORT).show()
+        }else if (passwordEdit != password){
+            loginProgressBar.visibility = View.INVISIBLE
+            Toast.makeText(this, "Please Enter Valid Password!", Toast.LENGTH_SHORT).show()
+        }else {
             editSharedPreferences.putInt("loginPref", 1).apply()
             loginProgressBar.visibility = View.INVISIBLE
             startActivity(Intent(this, MainActivity::class.java))
             emailEditText.setText("")
             passwordEditText.setText("")
-        } else {
-            loginProgressBar.visibility = View.INVISIBLE
-            Toast.makeText(this@LoginActivity, "Please Enter Valid User Credentials ", Toast.LENGTH_SHORT).show()
         }
     }
 

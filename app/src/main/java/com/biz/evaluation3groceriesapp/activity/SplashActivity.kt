@@ -59,6 +59,7 @@ class SplashActivity : AppCompatActivity() {
         when(data){
             1 -> startActivity(Intent(this, MainActivity::class.java))
             2 -> startActivity(Intent(this, LoginActivity::class.java))
+            3 -> startActivity(Intent(this, LoginOptionsActivity::class.java))
             else -> startActivity(Intent(this, WelcomeActivity::class.java))
         }
 

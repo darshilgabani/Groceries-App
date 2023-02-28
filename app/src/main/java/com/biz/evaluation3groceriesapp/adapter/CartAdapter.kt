@@ -55,7 +55,7 @@ class CartAdapter(private val products: ArrayList<Cart>) :
                 minusImageView.setImageResource(R.drawable.enabled_minus)
             }
 
-            if (data.ItemCount ==1){
+            if (data.ItemCount == 1) {
                 minusImageView.setImageResource(R.drawable.minus_button)
             }
 
@@ -79,11 +79,11 @@ class CartAdapter(private val products: ArrayList<Cart>) :
         }
 
         holder.plusButton.setOnClickListener {
-            listener?.onPlusButtonClicked(data, holder)
+            listener?.onPlusButtonClicked(data, holder,position)
         }
 
         holder.minusButton.setOnClickListener {
-            listener?.onMinusButtonClicked(data, holder)
+                listener?.onMinusButtonClicked(data, holder,position)
         }
 
     }

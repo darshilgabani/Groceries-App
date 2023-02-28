@@ -1,6 +1,7 @@
 package com.biz.evaluation3groceriesapp.fragment
 
 import android.app.AlertDialog
+import android.hardware.SensorEventListener
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -59,7 +60,6 @@ class CartFragment : Fragment(), CartClickListener {
     private var formattedGrandTotal: String? = null
 
     var listCart: ArrayList<Cart>? = ArrayList()
-
 
     private var adapterCart: CartAdapter? = null
 
@@ -408,6 +408,7 @@ bottomSheetProgressBar.visibility = View.VISIBLE
     override fun onCloseButtonClicked(data : Cart) {
         skeletonLoading.visibility = View.VISIBLE
         databaseRefAddToCart.child(data.Id).removeValue().addOnSuccessListener {
+            databaseRefProduct.child(data.Id).child("ItemCount").setValue(1)
             databaseRefProduct.child(data.Id).child("Added").setValue(false).addOnSuccessListener {
 
                 Toast.makeText(requireContext().applicationContext, "Removed From Cart to Successfully", Toast.LENGTH_SHORT).show()
@@ -416,7 +417,7 @@ bottomSheetProgressBar.visibility = View.VISIBLE
         }
     }
 
-    override fun onPlusButtonClicked(data: Cart, holder: CartAdapter.ViewHolder) {
+    override fun onPlusButtonClicked(data: Cart, holder: CartAdapter.ViewHolder, position: Int) {
         cartProgressBar.visibility = View.VISIBLE
         databaseRefProduct.child(data.Id).child("ItemCount")
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -438,6 +439,20 @@ bottomSheetProgressBar.visibility = View.VISIBLE
 
                             holder.countTextView.text = updatedCount.toString()
 
+                            listCart?.set(
+                                position,
+                                Cart(
+                                    data.Id,
+                                    data.Added,
+                                    data.Name,
+                                    data.Price,
+                                    data.Url,
+                                    data.Weight,
+                                    updatedCount
+                                )
+                            )
+                            adapterCart?.notifyDataSetChanged()
+
                             val newPrice  = formattedPrice?.toDouble()?.plus(data.Price.drop(1).toDouble())
                             formattedPrice = String.format("%.2f", newPrice)
                             totalPriceTextView.text = "$ $formattedPrice"
@@ -455,46 +470,78 @@ bottomSheetProgressBar.visibility = View.VISIBLE
 
     }
 
-    override fun onMinusButtonClicked(data: Cart, holder: CartAdapter.ViewHolder) {
+    override fun onMinusButtonClicked(data: Cart, holder: CartAdapter.ViewHolder, position: Int) {
 
-        databaseRefProduct.child(data.Id).child("ItemCount")
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val itemCount = snapshot.value
+        if (data.ItemCount == 1){
+            holder.minusButton.foreground = null
+            Toast.makeText(requireContext(), "No Item Available", Toast.LENGTH_SHORT).show()
+        }else {
+            databaseRefProduct.child(data.Id).child("ItemCount")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val itemCount = snapshot.value
 
-                    if ((itemCount as Long).toInt() > 1) {
-                        cartProgressBar.visibility = View.VISIBLE
+                        adapterCart?.getItemList()
 
-                        val updatedCount = (itemCount as Long).toInt() - 1
+                        if ((itemCount as Long).toInt() > 1) {
+                            cartProgressBar.visibility = View.VISIBLE
 
-                        if (updatedCount == 1){
-                            holder.minusImageView.setImageResource(R.drawable.minus_button)
-                        }else{
-                            holder.minusImageView.setImageResource(R.drawable.enabled_minus)
-                        }
+                            val updatedCount = (itemCount as Long).toInt() - 1
 
-                        databaseRefProduct.child(data.Id).child("ItemCount").setValue(updatedCount)
-                            .addOnSuccessListener {
-
-                                timesPrice(data, holder, updatedCount)
-
-                                holder.countTextView.text = updatedCount.toString()
-
-                                val newPrice  = formattedPrice?.toDouble()?.minus(data.Price.drop(1).toDouble())
-                                formattedPrice = String.format("%.2f", newPrice)
-                                totalPriceTextView.text = "$ $formattedPrice"
-                                cartProgressBar.visibility = View.GONE
-                                Toast.makeText(requireContext(), "Item Removed Successfully", Toast.LENGTH_SHORT).show()
+                            if (updatedCount == 1) {
+                                holder.minusImageView.setImageResource(R.drawable.minus_button)
+                            } else {
+                                holder.minusImageView.setImageResource(R.drawable.enabled_minus)
                             }
+
+                            databaseRefProduct.child(data.Id).child("ItemCount")
+                                .setValue(updatedCount)
+                                .addOnSuccessListener {
+
+                                    timesPrice(data, holder, updatedCount)
+
+                                    holder.countTextView.text = updatedCount.toString()
+
+                                    listCart?.set(
+                                        position,
+                                        Cart(
+                                            data.Id,
+                                            data.Added,
+                                            data.Name,
+                                            data.Price,
+                                            data.Url,
+                                            data.Weight,
+                                            updatedCount
+                                        )
+                                    )
+                                    adapterCart?.notifyDataSetChanged()
+                                    val newPrice = formattedPrice?.toDouble()
+                                        ?.minus(data.Price.drop(1).toDouble())
+                                    formattedPrice = String.format("%.2f", newPrice)
+                                    totalPriceTextView.text = "$ $formattedPrice"
+                                    cartProgressBar.visibility = View.GONE
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Item Removed Successfully",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                        }
+//                        else {
+//                            Toast.makeText(
+//                                requireContext(),
+//                                "No Item Available!",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+//                        }
+
                     }
 
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
-                }
-            })
-
+                    override fun onCancelled(error: DatabaseError) {
+                        TODO("Not yet implemented")
+                    }
+                })
+        }
     }
 
     private fun timesPrice(data: Cart, holder: CartAdapter.ViewHolder, count: Int) {

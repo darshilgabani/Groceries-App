@@ -333,6 +333,7 @@ class ShopFragment : Fragment(), ShopClickListener {
                             }
                     } else if (cartAddValue == true) {
                         databaseRefAddToCart.child(id).removeValue().addOnSuccessListener {
+                            databaseRefProduct.child(id).child("ItemCount").setValue(1)
                             databaseRefProduct.child(id).child("Added").setValue(false)
                                 .addOnSuccessListener {
                                     addButtonImage.setImageResource(R.drawable.plus_image)
@@ -379,6 +380,7 @@ pBExclOffer.visibility = View.VISIBLE
                         }
                     } else if (cartAddValue == true) {
                         databaseRefAddToCart.child(id).removeValue().addOnSuccessListener {
+                            databaseRefProduct.child(id).child("ItemCount").setValue(1)
                             databaseRefProduct.child(id).child("Added").setValue(false)
                                 .addOnSuccessListener {
                                     addButtonImage.setImageResource(R.drawable.plus_image)

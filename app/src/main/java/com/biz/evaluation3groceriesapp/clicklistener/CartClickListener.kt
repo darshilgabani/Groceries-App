@@ -5,6 +5,6 @@ import com.biz.evaluation3groceriesapp.modelclass.Cart
 
 interface CartClickListener {
     fun onCloseButtonClicked(data : Cart)
-    fun onPlusButtonClicked(data: Cart, holder: CartAdapter.ViewHolder)
-    fun onMinusButtonClicked(data: Cart, holder: CartAdapter.ViewHolder)
+    fun onPlusButtonClicked(data: Cart, holder: CartAdapter.ViewHolder, position: Int)
+    fun onMinusButtonClicked(data: Cart, holder: CartAdapter.ViewHolder, position: Int)
 }
