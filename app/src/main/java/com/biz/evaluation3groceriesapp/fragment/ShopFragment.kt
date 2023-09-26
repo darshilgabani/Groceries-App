@@ -288,8 +288,7 @@ class ShopFragment : Fragment(), ShopClickListener {
         databaseRefProduct = FirebaseDatabase.getInstance().getReference("Products")
         databaseRefAddToCart = FirebaseDatabase.getInstance().reference.child("AddToCart")
 
-        sharedPreferences =
-            requireActivity().getSharedPreferences("GroceriesApp", AppCompatActivity.MODE_PRIVATE)
+        sharedPreferences = requireActivity().getSharedPreferences("GroceriesApp", AppCompatActivity.MODE_PRIVATE)
         editSharedPreferences = sharedPreferences.edit()
 
     }
@@ -358,7 +357,8 @@ class ShopFragment : Fragment(), ShopClickListener {
 
     override fun onAddToCartExclClicked(id: String, addButtonImage: ImageView) {
 //        skeletonLoading.visibility = View.VISIBLE
-pBExclOffer.visibility = View.VISIBLE
+        pBExclOffer.visibility = View.VISIBLE
+
         databaseRefProduct.child(id).child("Added")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {

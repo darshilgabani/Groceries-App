@@ -17,7 +17,6 @@ import com.biz.evaluation3groceriesapp.adapter.OrderDetailAdapter
 import com.biz.evaluation3groceriesapp.modelclass.OrderDetail
 import com.google.firebase.database.*
 
-
 class OrderDetailsFragment : Fragment() {
     lateinit var orderDetailRecyclerView: RecyclerView
     lateinit var orderTitle: TextView

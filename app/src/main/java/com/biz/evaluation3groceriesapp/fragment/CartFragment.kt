@@ -109,6 +109,7 @@ class CartFragment : Fragment(), CartClickListener {
             priceTextView.text = "$$formattedPrice"
 
             closeButton.setOnClickListener {
+
                 val alertDialog = AlertDialog.Builder(requireContext(), R.style.FailedDialogTheme)
                 val dialogLayout = layoutInflater.inflate(R.layout.failed_dialog, null)
                 alertDialog.setView(dialogLayout)
